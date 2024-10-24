@@ -1,0 +1,4 @@
+Organisation:
+Thomas: affichage en pere methode
+Renaud: Gestion des voitures methode
+Theo: methode initale, creation des pipe et stockage des données
