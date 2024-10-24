@@ -2,13 +2,15 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <unistd.h>
+#include "config.h"
 
 int secteur(int *voiture);
 
 int main()
 {
-    int voiture = 11;
-
+    int voiture = 4;
+    
     secteur(voiture);
 }
 
@@ -32,5 +34,11 @@ for(i=0; i<3; i++)
     minutes = total/60;
     secondes = fmod(total, 60);
     //Afficher du temps total pour un tour (lap)
-    printf("Temps du tour (lap) : %.0d:%.3f secondes\n", minutes, secondes);
+    printf("Voiture %d : temps du tour (lap) : %.0d:%.3f secondes\n", voiture, minutes, secondes);
+}
+
+int practice()
+{
+    
+
 }
