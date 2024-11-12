@@ -1,9 +1,3 @@
-Organisation:
-Thomas: affichage en pere methode
-Renaud: Gestion des voitures methode
-Theo: methode initale, creation des pipe et stockage des données
-
-
 1. Setup and Initialization
 
     void init_championship(int season_races);
