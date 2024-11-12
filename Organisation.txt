@@ -2,3 +2,102 @@ Organisation:
 Thomas: affichage en pere methode
 Renaud: Gestion des voitures methode
 Theo: methode initale, creation des pipe et stockage des données
+
+
+1. Setup and Initialization
+
+    void init_championship(int season_races);
+    Initialize the championship settings, number of races, and points structure.
+
+    void init_circuit(int sectors, float sector_lengths[]);
+    Configure the circuit sectors and their respective lengths to determine lap times.
+
+    void init_race_weekend(bool is_sprint_weekend);
+    Initialize the format of the weekend (sprint or classic) and set up the session structure accordingly.
+
+2. Data Generators
+
+    float generate_sector_time();
+    Generate a random sector time between 25 and 45 seconds.
+
+    float generate_pit_time();
+    Generate pit stop times around 25 seconds.
+
+3. Session Management (Practice and Qualification)
+
+    void start_practice_session(int session_number);
+    Manage a practice session (P1, P2, P3). Record sector times and update standings.
+
+    void start_qualification_session(int q_number, int *car_positions, int cars_remaining);
+    Run a qualification session (Q1, Q2, or Q3), record sector times, update standings, and handle eliminations.
+
+    void record_best_sector_times(float sector_times[3]);
+    Track the best times per sector for a session.
+
+    void record_best_lap_time(int car_id, float lap_time);
+    Track the best lap times and keep rankings for each car.
+
+4. Race Management (Sprint and Sunday Race)
+
+    void start_race(bool is_sprint_race);
+    Handle the main race or sprint. Calculate lap times, manage pit stops, monitor car positions, and handle overtakes.
+
+    void update_positions(int car_positions[], float sector_times[]);
+    Continuously update car positions based on lap times and overtakes.
+
+    void manage_pit_stops(int car_id);
+    Determine pit stop timing and add the pit duration to the car’s current lap time.
+
+    void check_car_status(int car_id, bool *is_out, bool *is_in_pit);
+    Monitor if a car is out of the race or in the pit, and update status accordingly.
+
+5. Standings and Points
+
+    void update_standings(int car_positions[], bool is_sprint);
+    Update driver standings based on finishing positions and award points.
+
+    void award_fastest_lap_bonus(int car_id);
+    Award an extra point for the fastest lap if the car is in the top 10.
+
+6. File Management and Persistence
+
+    void save_session_results(const char *filename, int session_type);
+    Save the results of each session to a file for later retrieval.
+
+    void load_previous_session_results(const char *filename, int session_type);
+    Load the previous session data to resume where the program was left off.
+
+    void save_best_times(const char *filename);
+    Save the best times in each sector and lap for each session.
+
+7. Utilities for Time Management and Formatting
+
+    float calculate_lap_time(float sector_times[]);
+    Calculate the total lap time from sector times.
+
+    float time_difference(float time1, float time2);
+    Compute the time difference between two lap times.
+
+    void display_live_standings();
+    Display real-time standings during a session, refreshing regularly.
+
+8. Program Control and Session Flow
+
+    void start_weekend();
+    Coordinate the sessions in the correct order (practice, qualification, sprint/race) depending on the weekend type.
+
+    bool can_proceed_to_session(int current_session, bool session_completed[]);
+    Check if all previous sessions are complete before starting the next one.
+
+    void resume_weekend_from_file(const char *filename);
+    Load the weekend’s state from a file to resume where it left off.
+
+9. Debugging and Testing Helpers
+
+    void print_race_state();
+    Print the current state of the race for debugging purposes.
+
+    void print_final_standings();
+    Print the final standings for each race and championship points leaderboard.
+
+This outline covers most of the project requirements, allowing for organization of each part of the racing weekend.
