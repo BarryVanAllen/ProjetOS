@@ -1,5 +1,8 @@
 1. Setup and Initialization
 
+    init_cars()
+    creates cars for the race
+
     void init_championship(int season_races);
     Initialize the championship settings, number of races, and points structure.
 
@@ -11,7 +14,7 @@
 
 2. Data Generators
 
-    float generate_sector_time();
+    float generate_sector_time(); fait
     Generate a random sector time between 25 and 45 seconds.
 
     float generate_pit_time();
