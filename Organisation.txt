@@ -1,4 +1,4 @@
-1. Setup and Initialization
+1.Renaud Setup and Initialization
 
     init_cars() renaud
     creates cars for the race
@@ -12,7 +12,7 @@
     void init_race_weekend(bool is_sprint_weekend);
     Initialize the format of the weekend (sprint or classic) and set up the session structure accordingly.
 
-2. Data Generators
+2.Thomas Data Generators
 
     float generate_sector_time(); fait
     Generate a random sector time between 25 and 45 seconds.
@@ -20,7 +20,7 @@
     float generate_pit_time();
     Generate pit stop times around 25 seconds.
 
-3. Session Management (Practice and Qualification)
+3.Theo Session Management (Practice and Qualification)
 
     void start_practice_session(int session_number);
     Manage a practice session (P1, P2, P3). Record sector times and update standings.
@@ -34,7 +34,7 @@
     void record_best_lap_time(int car_id, float lap_time);
     Track the best lap times and keep rankings for each car.
 
-4. Race Management (Sprint and Sunday Race)
+4.Renaud Race Management (Sprint and Sunday Race)
 
     void start_race(bool is_sprint_race);
     Handle the main race or sprint. Calculate lap times, manage pit stops, monitor car positions, and handle overtakes.
@@ -48,7 +48,7 @@
     void check_car_status(int car_id, bool *is_out, bool *is_in_pit);
     Monitor if a car is out of the race or in the pit, and update status accordingly.
 
-5. Standings and Points
+5.Thomas Standings and Points
 
     void update_standings(int car_positions[], bool is_sprint);
     Update driver standings based on finishing positions and award points.
@@ -56,7 +56,7 @@
     void award_fastest_lap_bonus(int car_id);
     Award an extra point for the fastest lap if the car is in the top 10.
 
-6. File Management and Persistence
+6.Theo File Management and Persistence
 
     void save_session_results(const char *filename, int session_type);
     Save the results of each session to a file for later retrieval.
@@ -67,7 +67,7 @@
     void save_best_times(const char *filename);
     Save the best times in each sector and lap for each session.
 
-7. Utilities for Time Management and Formatting
+7.Renaud Utilities for Time Management and Formatting
 
     float calculate_lap_time(float sector_times[]);
     Calculate the total lap time from sector times.
@@ -78,7 +78,7 @@
     void display_live_standings();
     Display real-time standings during a session, refreshing regularly.
 
-8. Program Control and Session Flow
+8.Thomas Program Control and Session Flow
 
     void start_weekend();
     Coordinate the sessions in the correct order (practice, qualification, sprint/race) depending on the weekend type.
@@ -89,7 +89,7 @@
     void resume_weekend_from_file(const char *filename);
     Load the weekend’s state from a file to resume where it left off.
 
-9. Debugging and Testing Helpers
+9.Theo Debugging and Testing Helpers
 
     void print_race_state();
     Print the current state of the race for debugging purposes.
