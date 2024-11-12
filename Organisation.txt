@@ -1,6 +1,6 @@
 1. Setup and Initialization
 
-    init_cars()
+    init_cars() renaud
     creates cars for the race
 
     void init_championship(int season_races);
