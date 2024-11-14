@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include "config.h"
 
+#include "weekend_manager.h"
 int secteur(int *voiture);
 
 int main()
