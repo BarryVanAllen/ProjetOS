@@ -1,10 +1,11 @@
 #include "weekend_manager.h"
-#include <iostream>
-#include <fstream>
-using namespace std;
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_SESSIONS 4
 
 // Session names for display
-const string session_names[MAX_SESSIONS] = {"Practice", "Qualification", "Sprint", "Race"};
+const char *session_names[MAX_SESSIONS] = {"Practice", "Qualification", "Sprint", "Race"};
 
 // Function to check if all previous sessions are complete before starting the next one
 bool can_proceed_to_session(int current_session, const bool session_completed[]) {
@@ -17,30 +18,33 @@ bool can_proceed_to_session(int current_session, const bool session_completed[])
 }
 
 // Function to resume weekend state from a file
-void resume_weekend_from_file(const char *filename, WeekendState &state) {
-    ifstream file(filename);
-    if (!file.is_open()) {
-        cerr << "Error: Unable to open file " << filename << endl;
+void resume_weekend_from_file(const char *filename, WeekendState *state) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        fprintf(stderr, "Error: Unable to open file %s\n", filename);
         return;
     }
 
-    file >> state.is_sprint_weekend;
+    fscanf(file, "%d", &(state->is_sprint_weekend));
     for (int i = 0; i < MAX_SESSIONS; ++i) {
-        file >> state.session_completed[i];
+        int completed;
+        fscanf(file, "%d", &completed);
+        state->session_completed[i] = (completed != 0); // Convert int to bool
     }
-    file.close();
+
+    fclose(file);
 }
 
 // Function to coordinate the sessions in the correct order
-void coordinate_sessions(WeekendState &state) {
-    int max_sessions = state.is_sprint_weekend ? 3 : 4; // Sprint weekends skip the race session
+void coordinate_sessions(WeekendState *state) {
+    int max_sessions = state->is_sprint_weekend ? 3 : 4; // Sprint weekends skip the race session
 
     for (int i = 0; i < max_sessions; ++i) {
-        if (can_proceed_to_session(i, state.session_completed)) {
-            cout << "Proceeding with " << session_names[i] << " session." << endl;
-            state.session_completed[i] = true;
+        if (can_proceed_to_session(i, state->session_completed)) {
+            printf("Proceeding with %s session.\n", session_names[i]);
+            state->session_completed[i] = true;
         } else {
-            cout << "Cannot proceed to " << session_names[i] << " session. Previous sessions incomplete." << endl;
+            printf("Cannot proceed to %s session. Previous sessions incomplete.\n", session_names[i]);
             break;
         }
     }
