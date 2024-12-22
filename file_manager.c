@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /**
  * Reads the content of a file into a dynamically allocated buffer.
@@ -98,3 +99,28 @@ int copy_file(const char *source_file, const char *destination_file) {
     free(buffer);
     return 0;
 }
+
+
+int main() {
+    const char *source = "source.txt";
+    const char *destination = "destination.txt";
+
+    // Écrire des données dans un fichier
+    if (write_file(source, "Ceci est un test.\n", 0) == 0) {
+        printf("Fichier écrit avec succès : %s\n", source);
+    } else {
+        fprintf(stderr, "Erreur lors de l'écriture du fichier.\n");
+        return 1;
+    }
+
+    // Copier le fichier
+    if (copy_file(source, destination) == 0) {
+        printf("Fichier copié avec succès vers : %s\n", destination);
+    } else {
+        fprintf(stderr, "Erreur lors de la copie du fichier.\n");
+        return 1;
+    }
+
+    return 0;
+}
+
