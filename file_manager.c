@@ -1,7 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+/**
+ * Retrieves the path to a resource file.
+ * @param file_name Name of the resource file.
+ * @return Full path to the resource file.
+ */
+char *get_resources_file(char *file_name) {
+    static char resource_files[256];
+    strcpy(resource_files, "src/resources/");
+    strcat(resource_files, file_name);
+    return resource_files;
+}
 /**
  * Reads the content of a file into a dynamically allocated buffer.
  * 
@@ -99,7 +109,119 @@ int copy_file(const char *source_file, const char *destination_file) {
     free(buffer);
     return 0;
 }
+/**
+ * Searches for a value in a CSV file.
+ * 
+ * @param filename The name of the CSV file.
+ * @param value The value to search for.
+ * @return 1 if the value is found, 0 otherwise.
+ */
+int search_csv(const char *filename, const char *value) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Error opening CSV file");
+        return 0;
+    }
 
+    char line[1024];
+    while (fgets(line, sizeof(line), file)) {
+        if (strstr(line, value)) {
+            fclose(file);
+            return 1;
+        }
+    }
+
+    fclose(file);
+    return 0;
+}
+
+/**
+ * Retrieves rows from a CSV file where a specific column matches a value.
+ * 
+ * @param filename The name of the CSV file.
+ * @param column The column index to search in (0-based).
+ * @param value The value to match.
+ * @return 0 on success, or -1 on failure.
+ */
+int retrieve_rows_by_column(const char *filename, int column, const char *value) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Error opening CSV file");
+        return -1;
+    }
+
+    char line[1024];
+    while (fgets(line, sizeof(line), file)) {
+        char *token;
+        char *line_copy = strdup(line);
+        int current_column = 0;
+
+        token = strtok(line_copy, ",");
+        while (token) {
+            if (current_column == column && strcmp(token, value) == 0) {
+                printf("%s", line);  // Print the matching row
+                break;
+            }
+            token = strtok(NULL, ",");
+            current_column++;
+        }
+
+        free(line_copy);
+    }
+
+    fclose(file);
+    return 0;
+}
+
+/**
+ * Prints the entire content of a CSV file.
+ * 
+ * @param filename The name of the CSV file.
+ */
+void print_csv(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Error opening CSV file");
+        return;
+    }
+
+    char line[1024];
+    while (fgets(line, sizeof(line), file)) {
+        printf("%s", line);
+    }
+
+    fclose(file);
+}
+
+/**
+ * Writes data to a CSV file.
+ * 
+ * @param filename The name of the CSV file to write to.
+ * @param data Array of strings representing rows to write to the CSV file.
+ *             Each string should be a row formatted with commas.
+ * @param num_rows The number of rows in the data array.
+ * @param append If non-zero, data will be appended; otherwise, the file will be overwritten.
+ * @return 0 on success, or -1 on failure.
+ */
+int write_to_csv(const char *filename, const char **data, size_t num_rows, int append) {
+    const char *mode = append ? "a" : "w";
+    FILE *file = fopen(filename, mode);
+    if (file == NULL) {
+        perror("Error opening CSV file");
+        return -1;
+    }
+
+    for (size_t i = 0; i < num_rows; i++) {
+        if (fprintf(file, "%s\n", data[i]) < 0) {
+            perror("Error writing to CSV file");
+            fclose(file);
+            return -1;
+        }
+    }
+
+    fclose(file);
+    return 0;
+}
 
 int main() {
     const char *source = "source.txt";
