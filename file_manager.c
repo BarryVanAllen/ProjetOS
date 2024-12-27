@@ -8,7 +8,7 @@
  */
 char *get_resources_file(char *file_name) {
     static char resource_files[256];
-    strcpy(resource_files, "src/resources/");
+    strcpy(resource_files, "raceResources/");
     strcat(resource_files, file_name);
     return resource_files;
 }
