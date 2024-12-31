@@ -4,11 +4,17 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <pthread.h>
 #include "simulation.h"
 #include "affichage.h"
 #include "utils.h"
 
 #define NB_PILOTES 20
+
+typedef struct {
+    pthread_mutex_t mutex; // Mutex pour protéger les accès concurrents
+    Pilote pilotes[NB_PILOTES];
+} MemoirePartagee;
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -50,19 +56,29 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
+    // Initialisation du mutex
+    if (pthread_mutex_init(&mp->mutex, NULL) != 0) {
+        perror("Erreur d'initialisation du mutex");
+        exit(1);
+    }
+
     // Initialisation des pilotes
+    pthread_mutex_lock(&mp->mutex); // Début de la section critique
     for (int i = 0; i < NB_PILOTES; i++) {
         snprintf(mp->pilotes[i].nom, sizeof(mp->pilotes[i].nom), "Pilote %d", i + 1);
         mp->pilotes[i].temps_meilleur_tour = 0.0;
         mp->pilotes[i].dernier_temps_tour = 0.0;
     }
+    pthread_mutex_unlock(&mp->mutex); // Fin de la section critique
 
     const char *sessions[] = {"Essais Libres", "Qualifications", "Course"};
     int nb_tours[] = {20, 15, 50};
 
     // Exécuter les sessions selon la commande choisie
     for (int s = start_session; s <= end_session; s++) {
+        pthread_mutex_lock(&mp->mutex); // Début de la section critique
         simulate_session(mp, sessions[s], nb_tours[s], NB_PILOTES);
+        pthread_mutex_unlock(&mp->mutex); // Fin de la section critique
     }
 
     // Détachement et destruction de la mémoire partagée
@@ -71,6 +87,11 @@ int main(int argc, char *argv[]) {
     }
     if (shmctl(shmid, IPC_RMID, NULL) == -1) {
         perror("Erreur de destruction de mémoire partagée");
+    }
+
+    // Destruction du mutex
+    if (pthread_mutex_destroy(&mp->mutex) != 0) {
+        perror("Erreur de destruction du mutex");
     }
 
     return 0;
