@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/shm.h>
-#include <string.h>
+#include <time.h>
 #include <unistd.h>
+#include <sys/shm.h>
+#include <sys/ipc.h>
 #include <sys/wait.h>
-#include <pthread.h>
-#include "affichage.h"
+#include <semaphore.h>
+#include <fcntl.h>
+#include <string.h>
 
 #define NB_PILOTES 20
 #define NB_TOURS_ESSAIS 20
@@ -21,16 +23,16 @@ typedef struct {
 
 typedef struct {
     Pilote pilotes[NB_PILOTES];
+    sem_t semaphore_fils;
+    sem_t semaphore_pere;
 } MemoirePartagee;
 
-// Fonction pour générer un temps de tour aléatoire
 float generer_temps_tour(float base_temps, int difficulte) {
     float variation = (rand() % 500) / 1000.0;
     float coefficient_difficulte = 1.0 + (difficulte * 0.01);
     return base_temps * coefficient_difficulte + variation;
 }
 
-// Fonction de tri des pilotes par meilleur temps
 void tri_pilotes(Pilote pilotes[]) {
     for (int i = 0; i < NB_PILOTES - 1; i++) {
         for (int j = 0; j < NB_PILOTES - i - 1; j++) {
@@ -43,9 +45,8 @@ void tri_pilotes(Pilote pilotes[]) {
     }
 }
 
-// Fonction pour afficher les résultats en temps réel
 void afficher_resultats_en_temps_reel(Pilote pilotes[], int tour, const char *session) {
-    printf("\033[H\033[J"); // Efface l'écran (codes ANSI)
+    printf("\033[H\033[J");
     printf("--- Session : %s | Tour : %d ---\n", session, tour);
     printf("Classement actuel :\n");
     for (int i = 0; i < NB_PILOTES; i++) {
@@ -54,7 +55,6 @@ void afficher_resultats_en_temps_reel(Pilote pilotes[], int tour, const char *se
     }
 }
 
-// Fonction principale
 int main() {
     key_t key = ftok("f1_simulation", 65);
     int shmid = shmget(key, sizeof(MemoirePartagee), 0666 | IPC_CREAT);
@@ -69,7 +69,9 @@ int main() {
         exit(1);
     }
 
-    // Initialisation des pilotes
+    sem_init(&mp->semaphore_fils, 1, 0);
+    sem_init(&mp->semaphore_pere, 1, NB_PILOTES);
+
     for (int i = 0; i < NB_PILOTES; i++) {
         snprintf(mp->pilotes[i].nom, sizeof(mp->pilotes[i].nom), "Pilote %d", i + 1);
         mp->pilotes[i].temps_meilleur_tour = 0.0;
@@ -79,7 +81,6 @@ int main() {
     const char *sessions[] = {"Essais Libres", "Qualifications", "Course"};
     int nb_tours[] = {NB_TOURS_ESSAIS, NB_TOURS_QUALIF, NB_TOURS_COURSE};
 
-    // Boucle sur les sessions
     for (int s = 0; s < 3; s++) {
         const char *session = sessions[s];
         int tours = nb_tours[s];
@@ -89,34 +90,37 @@ int main() {
             for (int i = 0; i < NB_PILOTES; i++) {
                 pid = fork();
                 if (pid == 0) {
-                    // Processus enfant : génère un temps pour ce pilote
-                    srand(getpid() + time(NULL)); // Graine unique pour chaque processus
+                    srand(getpid() + time(NULL));
                     float temps_tour = generer_temps_tour(BASE_TEMPS, 5);
-                    mp->pilotes[i].dernier_temps_tour = temps_tour;
 
-                    // Met à jour le meilleur temps si nécessaire
+                    sem_wait(&mp->semaphore_pere);
+                    mp->pilotes[i].dernier_temps_tour = temps_tour;
                     if (mp->pilotes[i].temps_meilleur_tour == 0.0 || temps_tour < mp->pilotes[i].temps_meilleur_tour) {
                         mp->pilotes[i].temps_meilleur_tour = temps_tour;
                     }
+                    sem_post(&mp->semaphore_fils);
                     exit(0);
                 }
             }
 
-            // Processus parent : attend que tous les enfants terminent
             for (int i = 0; i < NB_PILOTES; i++) {
-                wait(NULL);
+                sem_wait(&mp->semaphore_fils);
             }
 
-            // Tri des pilotes et affichage des résultats
             tri_pilotes(mp->pilotes);
             afficher_resultats_en_temps_reel(mp->pilotes, tour, session);
 
-            // Attente pour simuler un intervalle entre les tours
-            usleep(500000); // 0.5 seconde
+            usleep(1000000); // Pause de 1 seconde entre les tours
+
+            for (int i = 0; i < NB_PILOTES; i++) {
+                sem_post(&mp->semaphore_pere);
+            }
         }
     }
 
-    // Détachement et destruction de la mémoire partagée
+    sem_destroy(&mp->semaphore_fils);
+    sem_destroy(&mp->semaphore_pere);
+
     if (shmdt(mp) == -1) {
         perror("Erreur de détachement de mémoire partagée");
     }
@@ -125,41 +129,4 @@ int main() {
     }
 
     return 0;
-}
-
-void simulate_session(MemoirePartagee *mp, const char *session, int nb_tours, int nb_pilotes) {
-    for (int tour = 1; tour <= nb_tours; tour++) {
-        pid_t pid;
-        for (int i = 0; i < nb_pilotes; i++) {
-            pid = fork();
-            if (pid == 0) {
-                srand(getpid() + time(NULL)); // Graine unique
-                float temps_tour = generer_temps_tour(70.0, 5);
-
-                // Section critique : mise à jour de la mémoire partagée
-                pthread_mutex_lock(&mp->mutex);
-                mp->pilotes[i].dernier_temps_tour = temps_tour;
-
-                // Met à jour le meilleur temps si nécessaire
-                if (mp->pilotes[i].temps_meilleur_tour == 0.0 || temps_tour < mp->pilotes[i].temps_meilleur_tour) {
-                    mp->pilotes[i].temps_meilleur_tour = temps_tour;
-                }
-                pthread_mutex_unlock(&mp->mutex); // Fin de la section critique
-
-                exit(0); // Terminer le processus enfant
-            }
-        }
-
-        for (int i = 0; i < nb_pilotes; i++) {
-            wait(NULL); // Attendre la fin de chaque processus enfant
-        }
-
-        // Section critique : tri et affichage
-        pthread_mutex_lock(&mp->mutex);
-        tri_pilotes(mp->pilotes, nb_pilotes);
-        afficher_resultats_en_temps_reel(mp->pilotes, tour, session);
-        pthread_mutex_unlock(&mp->mutex); // Fin de la section critique
-
-        usleep(500000); // Pause pour simuler un délai réaliste
-    }
 }
