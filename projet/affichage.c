@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "affichage.h"
+#include "types.h"
 
 void afficher_resultats_en_temps_reel(Pilote pilotes[], int tour, const char *session) {
     printf("\033[H\033[J");
