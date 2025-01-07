@@ -10,6 +10,7 @@
 #include <string.h>
 #include <affichage.h>
 #include <file_manager.h>
+#include <types.h>
 
 #define NB_PILOTES 20
 #define NB_TOURS_ESSAIS 20
