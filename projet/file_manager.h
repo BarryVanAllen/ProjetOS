@@ -30,7 +30,7 @@ char *read_file(const char *filename, size_t *buffer_size);
  * @param append If non-zero, data will be appended; otherwise, the file will be overwritten.
  * @return 0 on success, or -1 on failure.
  */
-int write_file(const char *filename, const char *data, int append);
+int write_file(const char *filename, char *data, int append);
 
 /**
  * Copies the contents of one file to another.
@@ -39,7 +39,7 @@ int write_file(const char *filename, const char *data, int append);
  * @param destination_file The destination file to copy to.
  * @return 0 on success, or -1 on failure.
  */
-int copy_file(const char *source_file, const char *destination_file);
+int copy_file(const char *source_file, char *destination_file);
 
 /**
  * Searches for a value in a CSV file.
@@ -48,7 +48,7 @@ int copy_file(const char *source_file, const char *destination_file);
  * @param value The value to search for.
  * @return 1 if the value is found, 0 otherwise.
  */
-int search_csv(const char *filename, const char *value);
+int search_csv(const char *filename, char *value);
 
 /**
  * Retrieves rows from a CSV file where a specific column matches a value.
@@ -58,14 +58,14 @@ int search_csv(const char *filename, const char *value);
  * @param value The value to match.
  * @return 0 on success, or -1 on failure.
  */
-int retrieve_rows_by_column(const char *filename, int column, const char *value);
+int retrieve_rows_by_column(const char *filename, int column, char *value);
 
 /**
  * Prints the entire content of a CSV file.
  * 
  * @param filename The name of the CSV file.
  */
-void print_csv(const char *filename);
+void print_csv(char *filename);
 
 /**
  * Writes data to a CSV file.
@@ -77,6 +77,6 @@ void print_csv(const char *filename);
  * @param append If non-zero, data will be appended; otherwise, the file will be overwritten.
  * @return 0 on success, or -1 on failure.
  */
-int write_to_csv(const char *filename, const char **data, size_t num_rows, int append);
+int write_to_csv(const char *filename, char **data, size_t num_rows, int append);
 
 #endif // FILE_UTILS_H
