@@ -18,12 +18,6 @@
 #define BASE_TEMPS 70.0
 
 typedef struct {
-    char nom[50];
-    float temps_meilleur_tour;
-    float dernier_temps_tour;
-} Pilote;
-
-typedef struct {
     Pilote pilotes[NB_PILOTES];
     int nbrLect;             // Nombre de lecteurs en cours
     sem_t mutex;             // Protection des écrivains
