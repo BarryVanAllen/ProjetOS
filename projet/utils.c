@@ -18,3 +18,13 @@ void tri_pilotes(Pilote pilotes[], int nb_pilotes) {
         }
     }
 }
+
+int calculNbTour(int tailleCircuit){
+  int res = NB_KM / tailleCircuit;
+  return res;
+}
+
+int calculNbTourSprint(int tailleCircuit){
+  int rest = 100/ tailleCircuit;
+  return rest;
+}
