@@ -1,6 +1,6 @@
 ## cahier des charges du projet
 
-###Projet Système TP Janvier 2025
+### Projet Système TP Janvier 2025
 
 Le but du projet est de gérer un championnat de Formule 1.
 Le championnat se compose d’une vingtaine de grands prix (entre 20 et 25). Cette saison comporte 24 grands prix.
