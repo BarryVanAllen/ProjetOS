@@ -66,7 +66,7 @@ char *read_file(const char *filename, size_t *buffer_size) {
  * @param append If non-zero, data will be appended; otherwise, the file will be overwritten.
  * @return 0 on success, or -1 on failure.
  */
-int write_file(const char *filename, const char *data, int append) {
+int write_file(const char *filename, char *data, int append) {
     const char *mode = append ? "a" : "w";
     FILE *file = fopen(filename, mode);
     if (file == NULL) {
