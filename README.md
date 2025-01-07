@@ -4,29 +4,37 @@
 
 Le but du projet est de gérer un championnat de Formule 1.
 Le championnat se compose d’une vingtaine de grands prix (entre 20 et 25). Cette saison comporte 24 grands prix.
+
 Chaque grand prix se déroule sur un week-end, typiquement du vendredi au dimanche.
+
 Il vous est demandé de gérer les grands prix depuis les séances d’essais du vendredi jusqu’à la course du dimanche, en passant par les essais du samedi et la séance de qualifications.
+
 Il y a 20 voitures engagées dans un grand prix.
+
 Leurs numéros sont : 1, 11, 44, 63, 16, 55, 4, 81, 14, 18, 10, 31, 23, 2, 22, 3, 77, 24, 20, 27.
+
 Un circuit de F1 est divisé en 3 secteurs (S1, S2, S3).
+
 Il y a 2 formats de week-end.
+
 Le  week-end « classique » s’établit comme suit :
-    • Vendredi matin, une séance d’essais libres d’1h (P1)
-    • Vendredi après-midi, une séance d’essais libres d’1h (P2)
-    • Samedi matin, une séance d’essais libres d’1h (P3)
-    • Samedi après-midi, la séance de qualifications, divisée en 3 parties :
-        ◦ Q1, durée 18 minutes, qui élimine les 5 dernières voitures (qui occuperont les places 16 à 20 sur la grille de départ de la course)
-        ◦ Q2, durée 15 minutes, qui élimine les 5 voitures suivantes (qui occuperont les places 11 à 15 sur la grille de départ de la course)
-        ◦ Q3, durée 12 minutes, qui permet de classer les 10 voitures restantes pour établir les 10 premières places sur la grille de départ de la course
-    • Dimanche après-midi, la course en elle-même.
+
+- Vendredi matin, une séance d’essais libres d’1h (P1)
+- Vendredi après-midi, une séance d’essais libres d’1h (P2)
+- amedi matin, une séance d’essais libres d’1h (P3)
+- Samedi après-midi, la séance de qualifications, divisée en 3 parties :
+    - Q1, durée 18 minutes, qui élimine les 5 dernières voitures (qui occuperont les places 16 à 20 sur la grille de départ de la course)
+    - Q2, durée 15 minutes, qui élimine les 5 voitures suivantes (qui occuperont les places 11 à 15 sur la grille de départ de la course)
+    - Q3, durée 12 minutes, qui permet de classer les 10 voitures restantes pour établir les 10 premières places sur la grille de départ de la course
+- Dimanche après-midi, la course en elle-même.
 
 
 Il y a quelques week-end « spéciaux », avec une course sprint le samedi, pour lesquels on a :
-    • Vendredi matin, une séance d’essais libres d’1h (P1)
-    • Vendredi après-midi, une séance de qualifications pour le sprint (sprint shootout) suivant le format de qualifications habituel. Cependant les 3 sessions seront plus courtes : Q1 : 12 minutes, Q2 : 10 minutes, Q3 : 8 minutes
-    • Samedi matin, une course « sprint » de 100 km environ.
-    • Samedi après-midi, la séance de qualifications pour la course du dimanche, divisée en 3 parties, selon les mêmes modalités que pour un week-end classique
-    • Dimanche après-midi la course en elle-même.
+- Vendredi matin, une séance d’essais libres d’1h (P1)
+- Vendredi après-midi, une séance de qualifications pour le sprint (sprint shootout) suivant le format de qualifications habituel. Cependant les 3 sessions seront plus courtes : Q1 : 12 minutes, Q2 : 10 minutes, Q3 : 8 minutes
+- Samedi matin, une course « sprint » de 100 km environ.
+- Samedi après-midi, la séance de qualifications pour la course du dimanche, divisée en 3 parties, selon les mêmes modalités que pour un week-end classique
+- Dimanche après-midi la course en elle-même.
 
 
 Votre projet devra prendre en charge les choses suivantes.
