@@ -1,12 +1,6 @@
 #include <stdio.h>
 #include "affichage.h"
 
-typedef struct {
-    char nom[50];
-    float temps_meilleur_tour;
-    float dernier_temps_tour;
-} Pilote;
-
 void afficher_resultats_en_temps_reel(Pilote pilotes[], int tour, const char *session) {
     printf("\033[H\033[J");
     printf("--- Session : %s | Tour : %d ---\n", session, tour);
