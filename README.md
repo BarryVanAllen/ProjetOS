@@ -30,8 +30,8 @@ Il y a quelques week-end « spéciaux », avec une course sprint le samedi, po
 
 
 Votre projet devra prendre en charge les choses suivantes.
-Première partie : gestion des séances d’essai, des qualifications et de la course
-Lors des séances d’essais (P1, P2, P3) :
+### Première partie : gestion des séances d’essai, des qualifications et de la course
+#### Lors des séances d’essais (P1, P2, P3) :
 - [ ] Relever les temps dans les 3 secteurs à chaque passage pour chaque voiture. Pour ce faire, vous devrez commencer par écrire un « générateur de temps » à l’aide du random. Le temps dans un secteur se situe entre 25 et 45 secondes, en gros.
 - [ ] Toujours savoir qui a le meilleur temps dans chacun des secteurs
 - [ ] Classer les voitures en fonction de leur tour complet le plus rapide
@@ -42,7 +42,7 @@ Lors des séances d’essais (P1, P2, P3) :
 - [ ] Conserver sur fichier le classement final à la fin de chaque séance ainsi que les meilleurs temps S1, S2 et S3 et le meilleur tour.
 
 
-Lors des qualifications (Q1, Q2, Q3) :
+#### Lors des qualifications (Q1, Q2, Q3) :
 - [ ] Relever les temps dans les 3 secteurs à chaque passage pour chaque voiture
 - [ ] Toujours savoir qui a le meilleur temps dans chacun des secteurs
 - [ ] Classer les voitures en fonction de leur tour complet le plus rapide
@@ -56,7 +56,7 @@ Lors des qualifications (Q1, Q2, Q3) :
 - [ ] Conserver sur fichier le classement final à la fin des 3 séances (ce sera l’ordre de départ pour la course sprint s’il y en a une ou pour la course du dimanche ), ainsi que les meilleurs temps en S1, S2, S3 et le meilleur tour.
 Attention ! Lors des essais et des qualifications, les voitures roulent quand elles veulent. Il n’y a pas un nombre déterminé de tours à faire.
 
-Lors de la course sprint et de la course du dimanche  : (un nombre déterminé de tours !!!)
+#### Lors de la course sprint et de la course du dimanche  : (un nombre déterminé de tours !!!)
 - [ ] Le premier classement est l’ordre sur la grille de départ. Vous devez donc faire démarrer les voitures selon l’ordre de la grille de départ.
 - [ ] Le classement doit toujours être maintenu tout au long de la course (gérer les dépassements)
 - [ ] Indiquer la différence de temps avec la voiture qui précède
@@ -66,10 +66,14 @@ Lors de la course sprint et de la course du dimanche  : (un nombre déterminé 
 - [ ] Savoir si la voiture est out (abandon) ; dans ce cas, elle sera classée en fin de classement
 - [ ] Savoir si la voiture est aux stands (PIT), gérer le temps aux stands et faire sortir la voiture à sa place dans la course (généralement 2 ou 3 PIT par voitures)
 - [ ] Conserver sur fichier le classement final et les meilleurs S1, S2, S3 et le meilleur tour.
-Remarque : les stands se trouvent toujours dans le secteur 3. Lors de la course du dimanche, 1 arrêt aux stands est obligatoire. Les voitures peuvent en faire plus. Pour la course sprint du samedi, il n’y a pas d’arrêt obligatoire aux stands. Le temps d’un arrêt aux stands se situe aux environs de 25 secondes.
+Remarque : les stands se trouvent toujours dans le secteur 3.
+- [ ] Lors de la course du dimanche, 1 arrêt aux stands est obligatoire. Les voitures peuvent en faire plus.
+- [ ] Pour la course sprint du samedi, il n’y a pas d’arrêt obligatoire aux stands.
+Le temps d’un arrêt aux stands se situe aux environs de 25 secondes.
 
 - [ ] Votre programme doit afficher régulièrement à l’écran les résultats en cours de séance. Cet affichage doit se faire sous forme d’un « refresh » régulier. Un affichage simple suffit.
-Gestion du championnat
+
+### Gestion du championnat
 On vous demande de gérer l’évolution du classement des pilotes (voitures) tout au long de la saison.
 - [ ] Lors de la course sprint, les 8 premiers reçoivent des points (dans l’ordre décroissant de 8 à 1).
 - [ ] Lors de la course du dimanche, les 10 premiers reçoivent des points (25, 20, 15, 10, 8, 6, 5, 3, 2, 1).
