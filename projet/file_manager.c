@@ -94,7 +94,7 @@ int write_file(const char *filename, char *data, int append) {
  * @param destination_file The destination file to copy to.
  * @return 0 on success, or -1 on failure.
  */
-int copy_file(const char *source_file, const char *destination_file) {
+int copy_file(const char *source_file, char *destination_file) {
     size_t buffer_size;
     char *buffer = read_file(source_file, &buffer_size);
     if (buffer == NULL) {
@@ -116,7 +116,7 @@ int copy_file(const char *source_file, const char *destination_file) {
  * @param value The value to search for.
  * @return 1 if the value is found, 0 otherwise.
  */
-int search_csv(const char *filename, const char *value) {
+int search_csv(const char *filename, char *value) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         perror("Error opening CSV file");
@@ -143,7 +143,7 @@ int search_csv(const char *filename, const char *value) {
  * @param value The value to match.
  * @return 0 on success, or -1 on failure.
  */
-int retrieve_rows_by_column(const char *filename, int column, const char *value) {
+int retrieve_rows_by_column(const char *filename, int column, char *value) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         perror("Error opening CSV file");
@@ -203,7 +203,7 @@ void print_csv(const char *filename) {
  * @param append If non-zero, data will be appended; otherwise, the file will be overwritten.
  * @return 0 on success, or -1 on failure.
  */
-int write_to_csv(const char *filename, const char **data, size_t num_rows, int append) {
+int write_to_csv(const char *filename, char **data, size_t num_rows, int append) {
     const char *mode = append ? "a" : "w";
     FILE *file = fopen(filename, mode);
     if (file == NULL) {
