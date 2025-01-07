@@ -6,7 +6,6 @@
 #include <pthread.h>
 #include "simulation.h"
 #include "affichage.h"
-#include "utils.h"
 
 void simulate_session(MemoirePartagee *mp, const char *session, int nb_tours, int nb_pilotes) {
     for (int tour = 1; tour <= nb_tours; tour++) {
