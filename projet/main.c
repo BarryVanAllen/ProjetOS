@@ -25,16 +25,19 @@ typedef struct {
 
 typedef struct {
     Pilote pilotes[NB_PILOTES];
-    sem_t semaphore_fils;
-    sem_t semaphore_pere;
+    int nbrLect;             // Nombre de lecteurs en cours
+    sem_t mutex;             // Protection des écrivains
+    sem_t mutLect;           // Protection du compteur de lecteurs
 } MemoirePartagee;
 
+// Fonction pour générer un temps de tour aléatoire
 float generer_temps_tour(float base_temps, int difficulte) {
     float variation = (rand() % 500) / 1000.0;
     float coefficient_difficulte = 1.0 + (difficulte * 0.01);
     return base_temps * coefficient_difficulte + variation;
 }
 
+// Fonction de tri des pilotes par meilleur temps
 void tri_pilotes(Pilote pilotes[]) {
     for (int i = 0; i < NB_PILOTES - 1; i++) {
         for (int j = 0; j < NB_PILOTES - i - 1; j++) {
@@ -47,6 +50,7 @@ void tri_pilotes(Pilote pilotes[]) {
     }
 }
 
+// Fonction pour afficher les résultats en temps réel
 void afficher_resultats_en_temps_reel(Pilote pilotes[], int tour, const char *session) {
     printf("\033[H\033[J");
     printf("--- Session : %s | Tour : %d ---\n", session, tour);
@@ -71,9 +75,11 @@ int main() {
         exit(1);
     }
 
-    sem_init(&mp->semaphore_fils, 1, 0);
-    sem_init(&mp->semaphore_pere, 1, NB_PILOTES);
+    sem_init(&mp->mutex, 1, 1);   // Initialisation du mutex pour protéger les écrivains
+    sem_init(&mp->mutLect, 1, 1); // Initialisation de la protection des lecteurs
+    mp->nbrLect = 0;              // Aucun lecteur actif au départ
 
+    // Initialisation des pilotes
     for (int i = 0; i < NB_PILOTES; i++) {
         snprintf(mp->pilotes[i].nom, sizeof(mp->pilotes[i].nom), "Pilote %d", i + 1);
         mp->pilotes[i].temps_meilleur_tour = 0.0;
@@ -95,33 +101,47 @@ int main() {
                     srand(getpid() + time(NULL));
                     float temps_tour = generer_temps_tour(BASE_TEMPS, 5);
 
-                    sem_wait(&mp->semaphore_pere);
+                    sem_wait(&mp->mutex); // Section critique pour les écrivains
                     mp->pilotes[i].dernier_temps_tour = temps_tour;
                     if (mp->pilotes[i].temps_meilleur_tour == 0.0 || temps_tour < mp->pilotes[i].temps_meilleur_tour) {
                         mp->pilotes[i].temps_meilleur_tour = temps_tour;
                     }
-                    sem_post(&mp->semaphore_fils);
+                    sem_post(&mp->mutex); // Fin de la section critique
                     exit(0);
                 }
             }
 
+            // Processus parent : lit les données des fils
             for (int i = 0; i < NB_PILOTES; i++) {
-                sem_wait(&mp->semaphore_fils);
+                wait(NULL);
             }
 
+            // Section critique pour les lecteurs
+            sem_wait(&mp->mutLect);
+            mp->nbrLect++;
+            if (mp->nbrLect == 1) {
+                sem_wait(&mp->mutex); // Premier lecteur bloque les écrivains
+            }
+            sem_post(&mp->mutLect);
+
+            // Lecture
             tri_pilotes(mp->pilotes);
             afficher_resultats_en_temps_reel(mp->pilotes, tour, session);
 
-            usleep(1000000); // Pause de 1 seconde entre les tours
-
-            for (int i = 0; i < NB_PILOTES; i++) {
-                sem_post(&mp->semaphore_pere);
+            // Fin de la section critique pour les lecteurs
+            sem_wait(&mp->mutLect);
+            mp->nbrLect--;
+            if (mp->nbrLect == 0) {
+                sem_post(&mp->mutex); // Dernier lecteur débloque les écrivains
             }
+            sem_post(&mp->mutLect);
+
+            usleep(1000000); // Pause de 1 seconde entre les tours
         }
     }
 
-    sem_destroy(&mp->semaphore_fils);
-    sem_destroy(&mp->semaphore_pere);
+    sem_destroy(&mp->mutex);
+    sem_destroy(&mp->mutLect);
 
     if (shmdt(mp) == -1) {
         perror("Erreur de détachement de mémoire partagée");
