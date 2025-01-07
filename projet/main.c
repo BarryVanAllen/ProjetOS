@@ -7,7 +7,6 @@
 #include <pthread.h>
 #include "simulation.h"
 #include "affichage.h"
-#include "utils.h"
 
 #define NB_PILOTES 20
 #define NB_TOURS_ESSAIS 20
