@@ -10,39 +10,54 @@
 #include "utils.h"
 
 #define NB_PILOTES 20
+#define NB_TOURS_ESSAIS 20
+#define NB_TOURS_QUALIF 15
+#define NB_TOURS_COURSE 50
+#define BASE_TEMPS 70.0
 
 typedef struct {
-    pthread_mutex_t mutex; // Mutex pour protéger les accès concurrents
+    char nom[50];
+    float temps_meilleur_tour;
+    float dernier_temps_tour;
+} Pilote;
+
+typedef struct {
     Pilote pilotes[NB_PILOTES];
 } MemoirePartagee;
 
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Usage: %s [all|free_practice|qualification|course]\n", argv[0]);
-        return 1;
+// Fonction pour générer un temps de tour aléatoire
+float generer_temps_tour(float base_temps, int difficulte) {
+    float variation = (rand() % 500) / 1000.0;
+    float coefficient_difficulte = 1.0 + (difficulte * 0.01);
+    return base_temps * coefficient_difficulte + variation;
+}
+
+// Fonction de tri des pilotes par meilleur temps
+void tri_pilotes(Pilote pilotes[]) {
+    for (int i = 0; i < NB_PILOTES - 1; i++) {
+        for (int j = 0; j < NB_PILOTES - i - 1; j++) {
+            if (pilotes[j].temps_meilleur_tour > pilotes[j + 1].temps_meilleur_tour) {
+                Pilote temp = pilotes[j];
+                pilotes[j] = pilotes[j + 1];
+                pilotes[j + 1] = temp;
+            }
+        }
     }
+}
 
-    const char *session_choice = argv[1];
-    int start_session = 0, end_session = 2;
-
-    if (strcmp(session_choice, "all") == 0) {
-        start_session = 0;
-        end_session = 2;
-    } else if (strcmp(session_choice, "free_practice") == 0) {
-        start_session = 0;
-        end_session = 0;
-    } else if (strcmp(session_choice, "qualification") == 0) {
-        start_session = 1;
-        end_session = 1;
-    } else if (strcmp(session_choice, "course") == 0) {
-        start_session = 2;
-        end_session = 2;
-    } else {
-        printf("Session invalide : %s. Choisissez entre all, free_practice, qualification, ou course.\n", session_choice);
-        return 1;
+// Fonction pour afficher les résultats en temps réel
+void afficher_resultats_en_temps_reel(Pilote pilotes[], int tour, const char *session) {
+    printf("\033[H\033[J"); // Efface l'écran (codes ANSI)
+    printf("--- Session : %s | Tour : %d ---\n", session, tour);
+    printf("Classement actuel :\n");
+    for (int i = 0; i < NB_PILOTES; i++) {
+        printf("%d. Pilote: %s | Meilleur temps: %.3f sec | Dernier tour: %.3f sec\n",
+               i + 1, pilotes[i].nom, pilotes[i].temps_meilleur_tour, pilotes[i].dernier_temps_tour);
     }
+}
 
-    // Crée la mémoire partagée
+// Fonction principale
+int main() {
     key_t key = ftok("f1_simulation", 65);
     int shmid = shmget(key, sizeof(MemoirePartagee), 0666 | IPC_CREAT);
     if (shmid == -1) {
@@ -56,29 +71,51 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    // Initialisation du mutex
-    if (pthread_mutex_init(&mp->mutex, NULL) != 0) {
-        perror("Erreur d'initialisation du mutex");
-        exit(1);
-    }
-
     // Initialisation des pilotes
-    pthread_mutex_lock(&mp->mutex); // Début de la section critique
     for (int i = 0; i < NB_PILOTES; i++) {
         snprintf(mp->pilotes[i].nom, sizeof(mp->pilotes[i].nom), "Pilote %d", i + 1);
         mp->pilotes[i].temps_meilleur_tour = 0.0;
         mp->pilotes[i].dernier_temps_tour = 0.0;
     }
-    pthread_mutex_unlock(&mp->mutex); // Fin de la section critique
 
     const char *sessions[] = {"Essais Libres", "Qualifications", "Course"};
-    int nb_tours[] = {20, 15, 50};
+    int nb_tours[] = {NB_TOURS_ESSAIS, NB_TOURS_QUALIF, NB_TOURS_COURSE};
 
-    // Exécuter les sessions selon la commande choisie
-    for (int s = start_session; s <= end_session; s++) {
-        pthread_mutex_lock(&mp->mutex); // Début de la section critique
-        simulate_session(mp, sessions[s], nb_tours[s], NB_PILOTES);
-        pthread_mutex_unlock(&mp->mutex); // Fin de la section critique
+    // Boucle sur les sessions
+    for (int s = 0; s < 3; s++) {
+        const char *session = sessions[s];
+        int tours = nb_tours[s];
+
+        for (int tour = 1; tour <= tours; tour++) {
+            pid_t pid;
+            for (int i = 0; i < NB_PILOTES; i++) {
+                pid = fork();
+                if (pid == 0) {
+                    // Processus enfant : génère un temps pour ce pilote
+                    srand(getpid() + time(NULL)); // Graine unique pour chaque processus
+                    float temps_tour = generer_temps_tour(BASE_TEMPS, 5);
+                    mp->pilotes[i].dernier_temps_tour = temps_tour;
+
+                    // Met à jour le meilleur temps si nécessaire
+                    if (mp->pilotes[i].temps_meilleur_tour == 0.0 || temps_tour < mp->pilotes[i].temps_meilleur_tour) {
+                        mp->pilotes[i].temps_meilleur_tour = temps_tour;
+                    }
+                    exit(0);
+                }
+            }
+
+            // Processus parent : attend que tous les enfants terminent
+            for (int i = 0; i < NB_PILOTES; i++) {
+                wait(NULL);
+            }
+
+            // Tri des pilotes et affichage des résultats
+            tri_pilotes(mp->pilotes);
+            afficher_resultats_en_temps_reel(mp->pilotes, tour, session);
+
+            // Attente pour simuler un intervalle entre les tours
+            usleep(500000); // 0.5 seconde
+        }
     }
 
     // Détachement et destruction de la mémoire partagée
@@ -87,11 +124,6 @@ int main(int argc, char *argv[]) {
     }
     if (shmctl(shmid, IPC_RMID, NULL) == -1) {
         perror("Erreur de destruction de mémoire partagée");
-    }
-
-    // Destruction du mutex
-    if (pthread_mutex_destroy(&mp->mutex) != 0) {
-        perror("Erreur de destruction du mutex");
     }
 
     return 0;
