@@ -1,0 +1,179 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
+#include <sys/shm.h>
+#include <sys/ipc.h>
+#include <sys/wait.h>
+#include <semaphore.h>
+#include <fcntl.h>
+#include <string.h>
+#include "affichage.h"
+#include "file_manager.h"
+
+#define NB_PILOTES 20
+#define BASE_TEMPS_SEC 70.0 // Base time in seconds
+#define VARIATION_MIN -3000 // Minimum time variation in milliseconds
+#define VARIATION_MAX 3000  // Maximum time variation in milliseconds
+#define MINUTES_IN_SEC 60
+
+typedef struct {
+    char nom[50];
+    float temps_meilleur_tour;
+    float dernier_temps_tour;
+} Pilote;
+
+typedef struct {
+    Pilote pilotes[NB_PILOTES];
+    int nbrLect;             // Nombre de lecteurs en cours
+    sem_t mutex;             // Protection des écrivains
+    sem_t mutLect;           // Protection du compteur de lecteurs
+} MemoirePartagee;
+
+// Function to convert time in seconds to minutes:seconds:milliseconds
+void format_temps(float seconds, char *formatted_time) {
+    int minutes = (int)(seconds / MINUTES_IN_SEC);
+    seconds = fmod(seconds, MINUTES_IN_SEC);
+    int milliseconds = (int)((seconds - (int)seconds) * 1000);
+    sprintf(formatted_time, "%02d:%05.2f", minutes, seconds + milliseconds / 1000.0);
+}
+
+// Generate a realistic lap time in seconds with random variation
+float generer_temps_tour() {
+    int random_variation = (rand() % (VARIATION_MAX - VARIATION_MIN + 1)) + VARIATION_MIN;
+    return BASE_TEMPS_SEC + (random_variation / 1000.0);
+}
+
+// Sort drivers by their best lap times
+void tri_pilotes(Pilote pilotes[], int nb_pilotes) {
+    for (int i = 0; i < nb_pilotes - 1; i++) {
+        for (int j = 0; j < nb_pilotes - i - 1; j++) {
+            if (pilotes[j].temps_meilleur_tour > pilotes[j + 1].temps_meilleur_tour) {
+                Pilote temp = pilotes[j];
+                pilotes[j] = pilotes[j + 1];
+                pilotes[j + 1] = temp;
+            }
+        }
+    }
+}
+
+// Write session results to a CSV file
+void ecrire_resultats_csv(const char *filename, Pilote pilotes[], int nb_pilotes, const char *session) {
+    char **data = malloc(nb_pilotes * sizeof(char *));
+    for (int i = 0; i < nb_pilotes; i++) {
+        char formatted_time[50];
+        format_temps(pilotes[i].temps_meilleur_tour, formatted_time);
+    
+    }
+    write_to_csv(filename, data, nb_pilotes, 0);
+    for (int i = 0; i < nb_pilotes; i++) {
+        free((void *)data[i]);
+    }
+    free(data);
+}
+
+// Run a session (Free Practice, Qualifiers, or Race)
+void run_session(MemoirePartagee *mp, const char *session, int nb_tours, int pilotes_actifs) {
+    for (int tour = 1; tour <= nb_tours; tour++) {
+        for (int i = 0; i < pilotes_actifs; i++) {
+            pid_t pid = fork();
+            if (pid == 0) {
+                srand(getpid() + time(NULL));
+                float temps_tour = generer_temps_tour();
+                sem_wait(&mp->mutex);
+                mp->pilotes[i].dernier_temps_tour = temps_tour;
+                if (mp->pilotes[i].temps_meilleur_tour == 0.0 || temps_tour < mp->pilotes[i].temps_meilleur_tour) {
+                    mp->pilotes[i].temps_meilleur_tour = temps_tour;
+                }
+                sem_post(&mp->mutex);
+                exit(0);
+            }
+        }
+
+        for (int i = 0; i < pilotes_actifs; i++) {
+            wait(NULL);
+        }
+
+        sem_wait(&mp->mutLect);
+        mp->nbrLect++;
+        if (mp->nbrLect == 1) sem_wait(&mp->mutex);
+        sem_post(&mp->mutLect);
+
+        tri_pilotes(mp->pilotes, pilotes_actifs);
+        afficher_resultats_en_temps_reel(mp->pilotes, tour, session);
+
+        sem_wait(&mp->mutLect);
+        mp->nbrLect--;
+        if (mp->nbrLect == 0) sem_post(&mp->mutex);
+        sem_post(&mp->mutLect);
+
+        usleep(1000000);
+    }
+}
+
+// Run qualifiers with elimination rounds
+void run_qualifiers(MemoirePartagee *mp) {
+    int pilotes_actifs[] = {NB_PILOTES, 15, 10};
+    for (int round = 0; round < 3; round++) {
+        char session[50];
+        sprintf(session, "Qualifications Q%d", round + 1);
+        run_session(mp, session, 15, pilotes_actifs[round]);
+        tri_pilotes(mp->pilotes, pilotes_actifs[round]);
+    }
+}
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s [free_practice|qualifiers|race]\n", argv[0]);
+        return 1;
+    }
+
+    key_t key = ftok("f1_simulation", 65);
+    int shmid = shmget(key, sizeof(MemoirePartagee), 0666 | IPC_CREAT);
+    if (shmid == -1) {
+        perror("Erreur de création de mémoire partagée");
+        exit(1);
+    }
+
+    MemoirePartagee *mp = (MemoirePartagee *)shmat(shmid, NULL, 0);
+    if (mp == (void *)-1) {
+        perror("Erreur de rattachement de mémoire partagée");
+        exit(1);
+    }
+
+    sem_init(&mp->mutex, 1, 1);
+    sem_init(&mp->mutLect, 1, 1);
+    mp->nbrLect = 0;
+
+    for (int i = 0; i < NB_PILOTES; i++) {
+        snprintf(mp->pilotes[i].nom, sizeof(mp->pilotes[i].nom), "Pilote %d", i + 1);
+        mp->pilotes[i].temps_meilleur_tour = 0.0;
+        mp->pilotes[i].dernier_temps_tour = 0.0;
+    }
+
+    if (strcmp(argv[1], "free_practice") == 0) {
+        run_session(mp, "Free Practice", 20, NB_PILOTES);
+        ecrire_resultats_csv("free_practice.csv", mp->pilotes, NB_PILOTES, "Free Practice");
+    } else if (strcmp(argv[1], "qualifiers") == 0) {
+        run_qualifiers(mp);
+        ecrire_resultats_csv("qualifiers.csv", mp->pilotes, 10, "Qualifiers");
+    } else if (strcmp(argv[1], "race") == 0) {
+        run_session(mp, "Race", 50, NB_PILOTES);
+        ecrire_resultats_csv("race.csv", mp->pilotes, NB_PILOTES, "Race");
+    } else {
+        fprintf(stderr, "Invalid session type. Use free_practice, qualifiers, or race.\n");
+        return 1;
+    }
+
+    sem_destroy(&mp->mutex);
+    sem_destroy(&mp->mutLect);
+
+    if (shmdt(mp) == -1) {
+        perror("Erreur de détachement de mémoire partagée");
+    }
+    if (shmctl(shmid, IPC_RMID, NULL) == -1) {
+        perror("Erreur de destruction de mémoire partagée");
+    }
+
+    return 0;
+}
