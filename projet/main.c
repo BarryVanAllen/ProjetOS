@@ -56,6 +56,76 @@ void afficher_resultats_en_temps_reel(Pilote pilotes[], int tour, const char *se
     }
 }
 
+void executer_phase_qualification(MemoirePartagee *mp, int nb_pilotes, const char *phase) {
+    for (int tour = 1; tour <= NB_TOURS_QUALIF; tour++) {
+        pid_t pid;
+        for (int i = 0; i < nb_pilotes; i++) {
+            pid = fork();
+            if (pid == 0) {
+                srand(getpid() + time(NULL));
+                float temps_tour = generer_temps_tour(BASE_TEMPS, 5);
+
+                sem_wait(&mp->mutex); // Section critique pour les écrivains
+                mp->pilotes[i].dernier_temps_tour = temps_tour;
+                if (mp->pilotes[i].temps_meilleur_tour == 0.0 || temps_tour < mp->pilotes[i].temps_meilleur_tour) {
+                    mp->pilotes[i].temps_meilleur_tour = temps_tour;
+                }
+                sem_post(&mp->mutex); // Fin de la section critique
+                exit(0);
+            }
+        }
+
+        for (int i = 0; i < nb_pilotes; i++) {
+            wait(NULL);
+        }
+
+        // Section critique pour les lecteurs
+        sem_wait(&mp->mutLect);
+        mp->nbrLect++;
+        if (mp->nbrLect == 1) {
+            sem_wait(&mp->mutex); // Premier lecteur bloque les écrivains
+        }
+        sem_post(&mp->mutLect);
+
+        // Lecture
+        tri_pilotes(mp->pilotes, nb_pilotes);
+        afficher_resultats(mp->pilotes, nb_pilotes, phase);
+
+        // Fin de la section critique pour les lecteurs
+        sem_wait(&mp->mutLect);
+        mp->nbrLect--;
+        if (mp->nbrLect == 0) {
+            sem_post(&mp->mutex); // Dernier lecteur débloque les écrivains
+        }
+        sem_post(&mp->mutLect);
+
+        usleep(1000000); // Pause de 1 seconde entre les tours
+    }
+}
+
+void qualification(MemoirePartagee *mp) {
+    // Q1
+    executer_phase_qualification(mp, NB_PILOTES, "Q1");
+    printf("Éliminés après Q1 :\n");
+    for (int i = 15; i < NB_PILOTES; i++) {
+        printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
+    }
+
+    // Q2
+    executer_phase_qualification(mp, 15, "Q2");
+    printf("Éliminés après Q2 :\n");
+    for (int i = 10; i < 15; i++) {
+        printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
+    }
+
+    // Q3
+    executer_phase_qualification(mp, 10, "Q3");
+    printf("Résultats finaux de Q3 (Top 10) :\n");
+    for (int i = 0; i < 10; i++) {
+        printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
+    }
+}
+
 int main() {
     key_t key = ftok("f1_simulation", 65);
     int shmid = shmget(key, sizeof(MemoirePartagee), 0666 | IPC_CREAT);
