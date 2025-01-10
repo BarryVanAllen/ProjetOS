@@ -1,6 +1,7 @@
 // types.h
 #ifndef TYPES_H
 #define TYPES_H
+#define NB_PILOTES 20
 
 typedef struct {
     char nom[50];
