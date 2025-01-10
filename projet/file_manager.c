@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "types.h"
 /**
  * Reads the content of a file into a dynamically allocated buffer.
  * 
