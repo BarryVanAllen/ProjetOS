@@ -15,9 +15,9 @@ void afficher_resultats_en_temps_reel(Pilote pilotes[], int tour, const char *se
 void afficher_resultats(Pilote pilotes[], int nb_pilotes, const char *phase) {
     printf("\033[H\033[J");
     printf("--- Résultats : %s ---\n", phase);
-    printf("\n┌──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬────────────────┬─────────┐\n");
-    printf("| Position | Num      | S1        | S2       | S3       | Lap      | Lap Time | Best Lap Time   | Ecart   |\n");
-    printf("├──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼────────────────┼─────────┤\n");
+    printf("\n┌───────────┬────────────┬────────────┬────────────┬────────────┬────────────┬────────────┬──────────────────┬───────────┐\n");
+    printf("| Position  | Num        | S1         | S2         | S3         | Lap        | Lap Time   | Best Lap Time    | Ecart   |\n");
+    printf("├───────────┼────────────┼────────────┼────────────┼────────────┼────────────┼────────────┼──────────────────┼───────────┤\n");
 
     for (int i = 0; i < nb_pilotes; i++) {
         int minutes = (int)(pilotes[i].dernier_temps_tour / 60);
