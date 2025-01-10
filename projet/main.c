@@ -160,17 +160,14 @@ int main() {
     Pilote *pilotes = mp->pilotes;
     if (parse_csv_to_pilotes("pilotes.csv", &pilotes, &count) == 0) {
         for (int i = 0; i < count; i++) {
-            // Lock the mutex for writing
-            struct sembuf sem_op = {0, -1, 0};  // Wait (lock) on mutex
-            semop(sem_id, &sem_op, 1);
-
+            // lock the mutex after printing
+            
             // Print the data from shared memory
             printf("Nom: %s, Num: %d, Temps Meilleur Tour: %.2f, Dernier Temps Tour: %.2f\n",
                    pilotes[i].nom, pilotes[i].num, pilotes[i].temps_meilleur_tour, pilotes[i].dernier_temps_tour);
 
             // Unlock the mutex after printing
-            sem_op.sem_op = 1;  // Signal (unlock) mutex
-            semop(sem_id, &sem_op, 1);
+
         }
     }
 
