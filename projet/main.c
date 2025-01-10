@@ -18,6 +18,7 @@
 #define BASE_TEMPS 70.0
 #define VARIATION_MIN -3000 // Minimum time variation in milliseconds
 #define VARIATION_MAX 3000  // Maximum time variation in milliseconds
+#define BASE_TEMPS_SEC 84.000
 
 // Fonction pour générer un temps de tour aléatoire
 float generer_temps_tour() {
