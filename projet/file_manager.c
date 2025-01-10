@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "types.h"
+
 /**
  * Retrieves the path to a resource file.
  * @param file_name Name of the resource file.
@@ -13,6 +13,7 @@ char *get_resources_file(char *file_name) {
     strcat(resource_files, file_name);
     return resource_files;
 }
+
 /**
  * Reads the content of a file into a dynamically allocated buffer.
  * 
@@ -193,78 +194,7 @@ void print_csv(const char *filename) {
 
     fclose(file);
 }
-#define MAX_PILOTES 1000
-#define BUFFER_SIZE 1024
 
-// Function to parse a single line into a Pilote structure
-int parse_line(const char *line, Pilote *pilote) {
-    return sscanf(line, "%49[^,],%d,%f,%f",
-                  pilote->nom,
-                  &pilote->num,
-                  &pilote->temps_meilleur_tour,
-                  &pilote->dernier_temps_tour);
-}
-
-// Function to read the CSV file using low-level I/O
-int read_csv(const char *filename, Pilote *pilotes, int max_pilotes) {
-    int fd = open(filename, O_RDONLY);
-    if (fd < 0) {
-        perror("Error opening file");
-        return -1;
-    }
-
-    char buffer[BUFFER_SIZE];
-    char line[BUFFER_SIZE];
-    int pilote_count = 0;
-    ssize_t bytes_read, line_index = 0;
-
-    while ((bytes_read = read(fd, buffer, sizeof(buffer))) > 0) {
-        for (ssize_t i = 0; i < bytes_read; ++i) {
-            if (buffer[i] == '\n' || buffer[i] == '\r') {
-                if (line_index > 0) {
-                    line[line_index] = '\0'; // Null-terminate the line
-                    if (pilote_count < max_pilotes) {
-                        if (parse_line(line, &pilotes[pilote_count]) == 4) {
-                            ++pilote_count;
-                        } else {
-                            fprintf(stderr, "Malformed line: %s\n", line);
-                        }
-                    }
-                    line_index = 0;
-                }
-            } else {
-                if (line_index < (BUFFER_SIZE - 1)) {
-                    line[line_index++] = buffer[i];
-                }
-            }
-        }
-    }
-
-    if (bytes_read < 0) {
-        perror("Error reading file");
-    }
-
-    close(fd);
-    return pilote_count;
-}
-
-// Test the function
-int main() {
-    Pilote pilotes[MAX_PILOTES];
-    const char *filename = "pilotes.csv";
-
-    int count = read_csv(filename, pilotes, MAX_PILOTES);
-    if (count >= 0) {
-        printf("Read %d pilotes:\n", count);
-        for (int i = 0; i < count; ++i) {
-            printf("Nom: %s, Num: %d, Meilleur Temps: %.2f, Dernier Temps: %.2f\n",
-                   pilotes[i].nom, pilotes[i].num,
-                   pilotes[i].temps_meilleur_tour, pilotes[i].dernier_temps_tour);
-        }
-    }
-
-    return 0;
-}
 /**
  * Writes data to a CSV file.
  * 
