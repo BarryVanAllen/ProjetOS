@@ -18,12 +18,6 @@
 #define NB_TOURS_COURSE 50
 #define BASE_TEMPS 70.0
 
-typedef struct {
-    Pilote pilotes[NB_PILOTES];
-    int nbrLect;             // Nombre de lecteurs en cours
-    sem_t mutex;             // Protection des écrivains
-    sem_t mutLect;           // Protection du compteur de lecteurs
-} MemoirePartagee;
 
 // Fonction pour générer un temps de tour aléatoire
 float generer_temps_tour(float base_temps, int difficulte) {
