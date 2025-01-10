@@ -15,7 +15,6 @@
 #define NB_TOURS_ESSAIS 20
 #define NB_TOURS_QUALIF 15
 #define NB_TOURS_COURSE 50
-#define BASE_TEMPS 70.0
 #define VARIATION_MIN -3000 // Minimum time variation in milliseconds
 #define VARIATION_MAX 3000  // Maximum time variation in milliseconds
 #define BASE_TEMPS_SEC 30.000
