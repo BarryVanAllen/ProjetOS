@@ -209,7 +209,6 @@ int main() {
     shmdt(mp);
     shmctl(shmid, IPC_RMID, NULL); // Remove shared memory segment
     
-    //destruction des Semaphores
     sem_destroy(&mp->mutex);
     sem_destroy(&mp->mutLect);
 
