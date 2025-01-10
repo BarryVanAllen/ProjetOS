@@ -28,7 +28,7 @@ void afficher_resultats(Pilote pilotes[], int nb_pilotes, const char *phase) {
         float best_seconds = pilotes[i].temps_meilleur_tour - (best_minutes * 60);
 
         // Affichage des données alignées avec des largeurs fixes
-        printf("│ %-10d│ %-12d│ %-12.3f│ %-12.3f│ %-12.3f│ %d:%08.3f  │ %-13.3f│ %d:%09.3f       │ %-14.3f │\n",
+        printf("│ %-10d│ %-11d│ %-11.3f│ %-11.3f│ %-11.3f│ %d:%06.3f  │ %-11.3f│ %d:%06.3f       │ %-9.3f │\n",
                i + 1,                     // Position
                pilotes[i].num,            // Numéro du pilote
                pilotes[i].secteur_1,      // Secteur 1
