@@ -1,4 +1,5 @@
 // types.h
+#include <semaphore.h>
 #ifndef TYPES_H
 #define TYPES_H
 #define NB_PILOTES 20
