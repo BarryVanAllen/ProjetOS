@@ -10,3 +10,14 @@ void afficher_resultats_en_temps_reel(Pilote pilotes[], int tour, const char *se
                i + 1, pilotes[i].nom, pilotes[i].temps_meilleur_tour, pilotes[i].dernier_temps_tour);
     }
 }
+
+void afficher_resultats(Pilote pilotes[], int nb_pilotes, const char *phase) {
+    printf("\033[H\033[J");
+    printf("--- Résultats : %s ---\n", phase);
+    for (int i = 0; i < nb_pilotes; i++) {
+        int minutes = (int)(pilotes[i].temps_meilleur_tour / 60);
+        float seconds = pilotes[i].temps_meilleur_tour - (minutes * 60);
+        printf("%d. Pilote: %s | Meilleur temps: %d:%.3f\n",
+               i + 1, pilotes[i].nom, minutes, seconds);
+    }
+}
