@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "types.h"
 
 /**
  * Retrieves the path to a resource file.
