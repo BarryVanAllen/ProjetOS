@@ -162,14 +162,22 @@ int main() {
         for (int i = 0; i < count; i++) {
             // lock the mutex after printing
             gestion_semaphore(mp, 1); // Section critique pour les écrivains
-            //fait ce que tu veux
-
-            fin_gestion_semaphore(mp, 1);
-            // Print the data from shared memory
-            printf("Nom: %s, Num: %d, Temps Meilleur Tour: %.2f, Dernier Temps Tour: %.2f\n",
-                   pilotes[i].nom, pilotes[i].num, pilotes[i].temps_meilleur_tour, pilotes[i].dernier_temps_tour);
-
+            // Writing data to shared memory
+            for (int i = 0; i < count; i++) {
+                // Write data to shared memory
+                strcpy(memoire->pilotes[i].nom, pilotes[i].nom);
+                mp->pilotes[i].num = pilotes[i].num;
+                mp->pilotes[i].temps_meilleur_tour = pilotes[i].temps_meilleur_tour;
+                mp->pilotes[i].dernier_temps_tour = pilotes[i].dernier_temps_tour;
+                // Optionally initialize the remaining fields to zero or some default value
+                mp->pilotes[i].temps_course_total = 0.0;
+                mp->pilotes[i].secteur_1 = 0.0;
+                mp->pilotes[i].secteur_2 = 0.0;
+                mp->pilotes[i].secteur_3 = 0.0;
+            }
             // Unlock the mutex after printing
+            fin_gestion_semaphore(mp, 1);
+
 
         }
     }
