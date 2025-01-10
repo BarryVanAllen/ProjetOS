@@ -8,4 +8,11 @@ typedef struct {
     float dernier_temps_tour;
 } Pilote;
 
+typedef struct {
+    Pilote pilotes[NB_PILOTES];
+    int nbrLect;             // Nombre de lecteurs en cours
+    sem_t mutex;             // Protection des écrivains
+    sem_t mutLect;           // Protection du compteur de lecteurs
+} MemoirePartagee;
+
 #endif // TYPES_H
