@@ -22,7 +22,7 @@ void afficher_resultats(Pilote pilotes[], int nb_pilotes, const char *phase) {
     }
 }
 
-/ Function to convert time in seconds to minutes:seconds:milliseconds
+// Function to convert time in seconds to minutes:seconds:milliseconds
 void format_temps(float seconds, char *formatted_time) {
     int minutes = (int)(seconds / MINUTES_IN_SEC);
     seconds = fmod(seconds, MINUTES_IN_SEC);
