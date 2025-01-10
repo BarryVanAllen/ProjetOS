@@ -12,7 +12,6 @@
 #include "file_manager.h"
 #include "types.h"
 
-#define NB_PILOTES 20
 #define NB_TOURS_ESSAIS 20
 #define NB_TOURS_QUALIF 15
 #define NB_TOURS_COURSE 50
