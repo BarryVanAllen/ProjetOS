@@ -9,6 +9,10 @@ typedef struct {
     int num;
     float temps_meilleur_tour;
     float dernier_temps_tour;
+    float temps_course_total;
+    float secteur_1;
+    float secteur_2;
+    float secteur_3;
 } Pilote;
 
 typedef struct {
@@ -19,3 +23,4 @@ typedef struct {
 } MemoirePartagee;
 
 #endif // TYPES_H
+
