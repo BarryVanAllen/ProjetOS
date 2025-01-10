@@ -33,9 +33,9 @@ float generer_temps_tour(float base_temps, int difficulte) {
 }
 
 // Fonction de tri des pilotes par meilleur temps
-void tri_pilotes(Pilote pilotes[]) {
-    for (int i = 0; i < NB_PILOTES - 1; i++) {
-        for (int j = 0; j < NB_PILOTES - i - 1; j++) {
+void tri_pilotes(Pilote pilotes[], int nb_pilotes) {
+    for (int i = 0; i < nb_pilotes - 1; i++) {
+        for (int j = 0; j < nb_pilotes - i - 1; j++) {
             if (pilotes[j].temps_meilleur_tour > pilotes[j + 1].temps_meilleur_tour) {
                 Pilote temp = pilotes[j];
                 pilotes[j] = pilotes[j + 1];
