@@ -42,23 +42,14 @@ int write_file(const char *filename, char *data, int append);
 int copy_file(const char *source_file, char *destination_file);
 
 /**
- * Searches for a value in a CSV file.
+ * Parses all rows from a CSV file into an array of Pilote structs.
  * 
  * @param filename The name of the CSV file.
- * @param value The value to search for.
- * @return 1 if the value is found, 0 otherwise.
- */
-int search_csv(const char *filename, char *value);
-
-/**
- * Retrieves rows from a CSV file where a specific column matches a value.
- * 
- * @param filename The name of the CSV file.
- * @param column The column index to search in (0-based).
- * @param value The value to match.
+ * @param pilotes An output pointer to an array of Pilote structs.
+ * @param count An output pointer to store the number of parsed rows.
  * @return 0 on success, or -1 on failure.
  */
-int retrieve_rows_by_column(const char *filename, int column, char *value);
+int parse_csv_to_pilotes(const char *filename, Pilote **pilotes, int *count) ;
 
 /**
  * Prints the entire content of a CSV file.
