@@ -3,18 +3,6 @@
 #include <string.h>
 
 /**
- * Retrieves the path to a resource file.
- * @param file_name Name of the resource file.
- * @return Full path to the resource file.
- */
-char *get_resources_file(char *file_name) {
-    static char resource_files[256];
-    strcpy(resource_files, "raceResources/");
-    strcat(resource_files, file_name);
-    return resource_files;
-}
-
-/**
  * Reads the content of a file into a dynamically allocated buffer.
  * 
  * @param filename The name of the file to read.
@@ -111,41 +99,16 @@ int copy_file(const char *source_file, char *destination_file) {
     free(buffer);
     return 0;
 }
-/**
- * Searches for a value in a CSV file.
- * 
- * @param filename The name of the CSV file.
- * @param value The value to search for.
- * @return 1 if the value is found, 0 otherwise.
- */
-int search_csv(const char *filename, char *value) {
-    FILE *file = fopen(filename, "r");
-    if (file == NULL) {
-        perror("Error opening CSV file");
-        return 0;
-    }
-
-    char line[1024];
-    while (fgets(line, sizeof(line), file)) {
-        if (strstr(line, value)) {
-            fclose(file);
-            return 1;
-        }
-    }
-
-    fclose(file);
-    return 0;
-}
 
 /**
- * Retrieves rows from a CSV file where a specific column matches a value.
+ * Parses all rows from a CSV file into an array of Pilote structs.
  * 
  * @param filename The name of the CSV file.
- * @param column The column index to search in (0-based).
- * @param value The value to match.
+ * @param pilotes An output pointer to an array of Pilote structs.
+ * @param count An output pointer to store the number of parsed rows.
  * @return 0 on success, or -1 on failure.
  */
-int retrieve_rows_by_column(const char *filename, int column, char *value) {
+int parse_csv_to_pilotes(const char *filename, Pilote **pilotes, int *count) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         perror("Error opening CSV file");
@@ -153,25 +116,60 @@ int retrieve_rows_by_column(const char *filename, int column, char *value) {
     }
 
     char line[1024];
-    while (fgets(line, sizeof(line), file)) {
-        char *token;
-        char *line_copy = strdup(line);
-        int current_column = 0;
+    int capacity = 20;  // Initial capacity for the dynamic array
+    int size = 0;
 
-        token = strtok(line_copy, ",");
-        while (token) {
-            if (current_column == column && strcmp(token, value) == 0) {
-                printf("%s", line);  // Print the matching row
-                break;
+    *pilotes = malloc(capacity * sizeof(Pilote));
+    if (*pilotes == NULL) {
+        perror("Memory allocation failed");
+        fclose(file);
+        return -1;
+    }
+
+    while (fgets(line, sizeof(line), file)) {
+        Pilote pilote;
+        char *token;
+
+        // Parse the "nom" field
+        token = strtok(line, ",");
+        if (token == NULL) continue;
+        strncpy(pilote.nom, token, sizeof(pilote.nom) - 1);
+        pilote.nom[sizeof(pilote.nom) - 1] = '\0';
+
+        // Parse the "num" field
+        token = strtok(NULL, ",");
+        if (token == NULL) continue;
+        pilote.num = atoi(token);
+
+        // Parse the "temps_meilleur_tour" field
+        token = strtok(NULL, ",");
+        if (token == NULL) continue;
+        pilote.temps_meilleur_tour = atof(token);
+
+        // Parse the "dernier_temps_tour" field
+        token = strtok(NULL, ",");
+        if (token == NULL) continue;
+        pilote.dernier_temps_tour = atof(token);
+
+        // Add the Pilote to the array
+        if (size >= capacity) {
+            capacity *= 2;
+            Pilote *new_array = realloc(*pilotes, capacity * sizeof(Pilote));
+            if (new_array == NULL) {
+                perror("Memory reallocation failed");
+                free(*pilotes);
+                fclose(file);
+                return -1;
             }
-            token = strtok(NULL, ",");
-            current_column++;
+            *pilotes = new_array;
         }
 
-        free(line_copy);
+        (*pilotes)[size++] = pilote;
     }
 
     fclose(file);
+
+    *count = size;  // Store the total number of rows parsed
     return 0;
 }
 
