@@ -20,6 +20,7 @@
 
 // Fonction pour générer un temps de tour aléatoire
 float generer_temps_tour(float base_temps, int difficulte) {
+    srand(time(NULL));
     float variation = (rand() % 500) / 1000.0;
     float coefficient_difficulte = 1.0 + (difficulte * 0.01);
     return base_temps * coefficient_difficulte + variation;
