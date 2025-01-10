@@ -190,7 +190,7 @@ int main() {
             sem_post(&mp->mutLect);
 
             // Lecture
-            tri_pilotes(mp->pilotes);
+            tri_pilotes(mp->pilotes, 20);
             afficher_resultats_en_temps_reel(mp->pilotes, tour, session);
 
             // Fin de la section critique pour les lecteurs
