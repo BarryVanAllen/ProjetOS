@@ -18,7 +18,7 @@
 #define BASE_TEMPS 70.0
 #define VARIATION_MIN -3000 // Minimum time variation in milliseconds
 #define VARIATION_MAX 3000  // Maximum time variation in milliseconds
-#define BASE_TEMPS_SEC 84.000
+#define BASE_TEMPS_SEC 30.000
 
 float generer_temps_secteur() {
     return BASE_TEMPS_SEC + ((rand() % (VARIATION_MAX - VARIATION_MIN + 1)) + VARIATION_MIN) / 1000.0;
