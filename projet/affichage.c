@@ -20,11 +20,26 @@ void afficher_resultats(Pilote pilotes[], int nb_pilotes, const char *phase) {
     printf("├──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼────────────────┼─────────┤\n");
 
     for (int i = 0; i < nb_pilotes; i++) {
-        int minutes = (int)(pilotes[i].temps_meilleur_tour / 60);
-        float seconds = pilotes[i].temps_meilleur_tour - (minutes * 60);
-        printf("|   %d.    |    %s    |    %d:%.3f   | \n",
-               i + 1, pilotes[i].nom, minutes, seconds);
+        int minutes = (int)(pilotes[i].dernier_temps_tour / 60);
+        float seconds = pilotes[i].dernier_temps_tour - (minutes * 60);
+        
+        int best_minutes = (int)(pilotes[i].temps_meilleur_tour / 60);
+        float best_seconds = pilotes[i].temps_meilleur_tour - (best_minutes * 60);
+
+        // Affichage des secteurs et du temps du tour
+        printf("|   %d.    |    %s    |  %.3f   |  %.3f   |  %.3f   |  %d:%.3f |  %.3f   |  %d:%.3f       |  %.3f   |\n",
+               i + 1, 
+               pilotes[i].nom, 
+               pilotes[i].secteur_1, 
+               pilotes[i].secteur_2, 
+               pilotes[i].secteur_3,
+               minutes, seconds,
+               pilotes[i].dernier_temps_tour,
+               best_minutes, best_seconds,
+               pilotes[i].temps_meilleur_tour);
     }
+
+    printf("└──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴────────────────┴─────────┘\n");
 }
 
 
