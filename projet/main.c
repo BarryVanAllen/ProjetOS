@@ -56,6 +56,7 @@ void afficher_resultats_en_temps_reel(Pilote pilotes[], int tour, const char *se
     }
 }
 
+// Executer phase de qualification
 void executer_phase_qualification(MemoirePartagee *mp, int nb_pilotes, const char *phase) {
     for (int tour = 1; tour <= NB_TOURS_QUALIF; tour++) {
         pid_t pid;
@@ -102,7 +103,7 @@ void executer_phase_qualification(MemoirePartagee *mp, int nb_pilotes, const cha
         usleep(1000000); // Pause de 1 seconde entre les tours
     }
 }
-
+// Qualification
 void qualification(MemoirePartagee *mp) {
     // Q1
     executer_phase_qualification(mp, NB_PILOTES, "Q1");
@@ -142,13 +143,14 @@ void ecrire_resultats_csv(const char *filename, Pilote pilotes[], int nb_pilotes
 }
 
 int main() {
+    // Create semaphores
     key_t key = ftok("f1_simulation", 65);
     int shmid = shmget(key, sizeof(MemoirePartagee), 0666 | IPC_CREAT);
     if (shmid == -1) {
         perror("Erreur de création de mémoire partagée");
         exit(1);
     }
-
+    //Create MemoiurePartagee
     MemoirePartagee *mp = (MemoirePartagee *)shmat(shmid, NULL, 0);
     if (mp == (void *)-1) {
         perror("Erreur de rattachement de mémoire partagée");
@@ -219,7 +221,8 @@ int main() {
             usleep(1000000); // Pause de 1 seconde entre les tours
         }
     }
-
+    
+    //destruction des Semaphores
     sem_destroy(&mp->mutex);
     sem_destroy(&mp->mutLect);
 
