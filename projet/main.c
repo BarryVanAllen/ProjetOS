@@ -90,12 +90,12 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, const char *phase, int n
     }
 }
 
-void free_practice(MemoirePartagee *mp, int repeat) {
+void free_practice(MemoirePartagee *mp, int repeat, int num_laps) {
     for (int i = 0; i < repeat; i++) {
-        char session_name[10];
+        char session_name[6]; // "FP" + up to 3 digits + null terminator
         snprintf(session_name, sizeof(session_name), "FP%d", i + 1);
         printf("Début des essais libres (%s)\n", session_name);
-        executer_tour(mp, NB_PILOTES, session_name, NB_TOURS_ESSAIS);
+        executer_tour(mp, NB_PILOTES, session_name, num_laps);
     }
 }
 
