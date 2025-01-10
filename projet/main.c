@@ -90,20 +90,15 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, const char *phase, int n
     }
 }
 
-void free_practice_1(MemoirePartagee *mp) {
-    printf("Début des essais libres (FP1)\n");
-    executer_tour(mp, NB_PILOTES, "FP1", NB_TOURS_ESSAIS);
+void free_practice(MemoirePartagee *mp, int repeat) {
+    for (int i = 0; i < repeat; i++) {
+        char session_name[10];
+        snprintf(session_name, sizeof(session_name), "FP%d", i + 1);
+        printf("Début des essais libres (%s)\n", session_name);
+        executer_tour(mp, NB_PILOTES, session_name, NB_TOURS_ESSAIS);
+    }
 }
 
-void free_practice_2(MemoirePartagee *mp) {
-    printf("Début des essais libres (FP2)\n");
-    executer_tour(mp, NB_PILOTES, "FP2", NB_TOURS_ESSAIS);
-}
-
-void free_practice_3(MemoirePartagee *mp) {
-    printf("Début des essais libres (FP3)\n");
-    executer_tour(mp, NB_PILOTES, "FP3", NB_TOURS_ESSAIS);
-}
 
 void qualification(MemoirePartagee *mp) {
     const int pilotes_q1 = NB_PILOTES, pilotes_q2 = 15, pilotes_q3 = 10;
@@ -169,9 +164,7 @@ int main() {
     }
 
     // Appel indépendant des différentes sessions
-    free_practice_1(mp);  // FP1
-    free_practice_2(mp);  // FP2
-    free_practice_3(mp);  // FP3
+    free_practice(mp,3);  // FP1 , FP2, FP3
     qualification(mp);    // Qualification
     course(mp);           // Course
 
