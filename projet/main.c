@@ -203,17 +203,14 @@ int main() {
             usleep(1000000); // Pause de 1 seconde entre les tours
         }
     }
+
+    // Clean up: Detach shared memory and destroy semaphores
+    shmdt(mp);
+    shmctl(shmid, IPC_RMID, NULL); // Remove shared memory segment
     
     //destruction des Semaphores
     sem_destroy(&mp->mutex);
     sem_destroy(&mp->mutLect);
-
-    if (shmdt(mp) == -1) {
-        perror("Erreur de détachement de mémoire partagée");
-    }
-    if (shmctl(shmid, IPC_RMID, NULL) == -1) {
-        perror("Erreur de destruction de mémoire partagée");
-    }
 
     return 0;
 }
