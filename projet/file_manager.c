@@ -222,26 +222,3 @@ int write_to_csv(const char *filename, char **data, size_t num_rows, int append)
     fclose(file);
     return 0;
 }
-
-int main() {
-    const char *source = "source.txt";
-    const char *destination = "destination.txt";
-
-    // Écrire des données dans un fichier
-    if (write_file(source, "Ceci est un test.\n", 0) == 0) {
-        printf("Fichier écrit avec succès : %s\n", source);
-    } else {
-        fprintf(stderr, "Erreur lors de l'écriture du fichier.\n");
-        return 1;
-    }
-
-    // Copier le fichier
-    if (copy_file(source, destination) == 0) {
-        printf("Fichier copié avec succès vers : %s\n", destination);
-    } else {
-        fprintf(stderr, "Erreur lors de la copie du fichier.\n");
-        return 1;
-    }
-
-    return 0;
-}
