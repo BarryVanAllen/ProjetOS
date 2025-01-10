@@ -20,10 +20,15 @@
 #define VARIATION_MAX 3000  // Maximum time variation in milliseconds
 #define BASE_TEMPS_SEC 84.000
 
-// Fonction pour générer un temps de tour aléatoire
-float generer_temps_tour() {
-    int random_variation = (rand() % (VARIATION_MAX - VARIATION_MIN + 1)) + VARIATION_MIN;
-    return BASE_TEMPS_SEC + (random_variation / 1000.0);
+float generer_temps_secteur() {
+    return BASE_TEMPS_SEC + ((rand() % (VARIATION_MAX - VARIATION_MIN + 1)) + VARIATION_MIN) / 1000.0;
+}
+
+void generer_temps_pilote(Pilote *pilote) {
+    pilote->secteur_1 = generer_temps_secteur();
+    pilote->secteur_2 = generer_temps_secteur();
+    pilote->secteur_3 = generer_temps_secteur();
+    pilote->dernier_temps_tour = pilote->secteur_1 + pilote->secteur_2 + pilote->secteur_3;
 }
 
 // Fonction de tri des pilotes par meilleur temps
@@ -45,15 +50,17 @@ void executer_phase_qualification(MemoirePartagee *mp, int nb_pilotes, const cha
         pid_t pid;
         for (int i = 0; i < nb_pilotes; i++) {
             pid = fork();
-            if (pid == 0) {
-                srand(getpid() + time(NULL));
-                float temps_tour = generer_temps_tour(BASE_TEMPS, 5);
+                if (pid == 0) {
+                    srand(getpid() + time(NULL));
 
-                sem_wait(&mp->mutex); // Section critique pour les écrivains
-                mp->pilotes[i].dernier_temps_tour = temps_tour;
-                if (mp->pilotes[i].temps_meilleur_tour == 0.0 || temps_tour < mp->pilotes[i].temps_meilleur_tour) {
-                    mp->pilotes[i].temps_meilleur_tour = temps_tour;
-                }
+                        sem_wait(&mp->mutex); // Section critique pour les écrivains
+                        generer_temps_pilote(&mp->pilotes[i]);
+    
+                    // Mise à jour du meilleur temps de tour
+                    if (mp->pilotes[i].temps_meilleur_tour == 0.0 || mp->pilotes[i].dernier_temps_tour < mp->pilotes[i].temps_meilleur_tour) {
+                    mp->pilotes[i].temps_meilleur_tour = mp->pilotes[i].dernier_temps_tour;
+                }        
+
                 sem_post(&mp->mutex); // Fin de la section critique
                 exit(0);
             }
@@ -164,15 +171,17 @@ int main() {
                 pid = fork();
                 if (pid == 0) {
                     srand(getpid() + time(NULL));
-                    float temps_tour = generer_temps_tour(BASE_TEMPS, 5);
 
                     sem_wait(&mp->mutex); // Section critique pour les écrivains
-                    mp->pilotes[i].dernier_temps_tour = temps_tour;
-                    if (mp->pilotes[i].temps_meilleur_tour == 0.0 || temps_tour < mp->pilotes[i].temps_meilleur_tour) {
-                        mp->pilotes[i].temps_meilleur_tour = temps_tour;
-                    }
-                    sem_post(&mp->mutex); // Fin de la section critique
-                    exit(0);
+                    generer_temps_pilote(&mp->pilotes[i]);
+    
+                // Mise à jour du meilleur temps de tour
+                if (mp->pilotes[i].temps_meilleur_tour == 0.0 || mp->pilotes[i].dernier_temps_tour < mp->pilotes[i].temps_meilleur_tour) {
+                    mp->pilotes[i].temps_meilleur_tour = mp->pilotes[i].dernier_temps_tour;
+                }
+
+                sem_post(&mp->mutex); // Fin de la section critique
+                exit(0);
                 }
             }
 
