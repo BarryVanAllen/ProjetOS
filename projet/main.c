@@ -126,6 +126,21 @@ void qualification(MemoirePartagee *mp) {
     }
 }
 
+// Write session results to a CSV file
+void ecrire_resultats_csv(const char *filename, Pilote pilotes[], int nb_pilotes, const char *session) {
+    char **data = malloc(nb_pilotes * sizeof(char *));
+    for (int i = 0; i < nb_pilotes; i++) {
+        char formatted_time[50];
+        format_temps(pilotes[i].temps_meilleur_tour, formatted_time);
+    
+    }
+    write_to_csv(filename, data, nb_pilotes, 0);
+    for (int i = 0; i < nb_pilotes; i++) {
+        free((void *)data[i]);
+    }
+    free(data);
+}
+
 int main() {
     key_t key = ftok("f1_simulation", 65);
     int shmid = shmget(key, sizeof(MemoirePartagee), 0666 | IPC_CREAT);
