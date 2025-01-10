@@ -16,14 +16,13 @@
 #define NB_TOURS_QUALIF 15
 #define NB_TOURS_COURSE 50
 #define BASE_TEMPS 70.0
-
+#define VARIATION_MIN -3000 // Minimum time variation in milliseconds
+#define VARIATION_MAX 3000  // Maximum time variation in milliseconds
 
 // Fonction pour générer un temps de tour aléatoire
-float generer_temps_tour(float base_temps, int difficulte) {
-    srand(time(NULL));
-    float variation = (rand() % 500) / 1000.0;
-    float coefficient_difficulte = 1.0 + (difficulte * 0.01);
-    return base_temps * coefficient_difficulte + variation;
+float generer_temps_tour() {
+    int random_variation = (rand() % (VARIATION_MAX - VARIATION_MIN + 1)) + VARIATION_MIN;
+    return BASE_TEMPS_SEC + (random_variation / 1000.0);
 }
 
 // Fonction de tri des pilotes par meilleur temps
