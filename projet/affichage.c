@@ -27,7 +27,7 @@ void afficher_resultats(Pilote pilotes[], int nb_pilotes, const char *phase) {
         float best_seconds = pilotes[i].temps_meilleur_tour - (best_minutes * 60);
 
         // Affichage des secteurs et du temps du tour
-        printf("|   %d.    |    %s    |  %.3f   |  %.3f   |  %.3f   |  %d:%.3f |  %.3f   |  %d:%.3f       |  %.3f   |\n",
+        printf("│ %d.    │    %s    │  %.3f   │  %.3f   │  %.3f   │  %d:%.3f │  %.3f   │  %d:%.3f       │  %.3f   │\n",
                i + 1, 
                pilotes[i].nom, 
                pilotes[i].secteur_1, 
