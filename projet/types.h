@@ -6,6 +6,7 @@
 
 typedef struct {
     char nom[50];
+    int num;
     float temps_meilleur_tour;
     float dernier_temps_tour;
 } Pilote;
