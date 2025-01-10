@@ -165,7 +165,7 @@ int main() {
             // Writing data to shared memory
             for (int i = 0; i < count; i++) {
                 // Write data to shared memory
-                strcpy(memoire->pilotes[i].nom, pilotes[i].nom);
+                strcpy(mp->pilotes[i].nom, pilotes[i].nom);
                 mp->pilotes[i].num = pilotes[i].num;
                 mp->pilotes[i].temps_meilleur_tour = pilotes[i].temps_meilleur_tour;
                 mp->pilotes[i].dernier_temps_tour = pilotes[i].dernier_temps_tour;
