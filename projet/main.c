@@ -161,7 +161,10 @@ int main() {
     if (parse_csv_to_pilotes("pilotes.csv", &pilotes, &count) == 0) {
         for (int i = 0; i < count; i++) {
             // lock the mutex after printing
-            
+            gestion_semaphore(mp, 1); // Section critique pour les écrivains
+            //fait ce que tu veux
+
+            fin_gestion_semaphore(mp, 1);
             // Print the data from shared memory
             printf("Nom: %s, Num: %d, Temps Meilleur Tour: %.2f, Dernier Temps Tour: %.2f\n",
                    pilotes[i].nom, pilotes[i].num, pilotes[i].temps_meilleur_tour, pilotes[i].dernier_temps_tour);
