@@ -15,13 +15,18 @@ void afficher_resultats_en_temps_reel(Pilote pilotes[], int tour, const char *se
 void afficher_resultats(Pilote pilotes[], int nb_pilotes, const char *phase) {
     printf("\033[H\033[J");
     printf("--- Résultats : %s ---\n", phase);
+    printf("\n┌──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬────────────────┬─────────┐\n");
+    printf("| Position | Num      | S1        | S2       | S3       | Lap      | Lap Time | Best Lap Time   | Ecart   |\n");
+    printf("├──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼────────────────┼─────────┤\n");
+
     for (int i = 0; i < nb_pilotes; i++) {
         int minutes = (int)(pilotes[i].temps_meilleur_tour / 60);
         float seconds = pilotes[i].temps_meilleur_tour - (minutes * 60);
-        printf("%d. Pilote: %s | Meilleur temps: %d:%.3f\n",
+        printf("|   %d.    |    %s    |    %d:%.3f   | \n",
                i + 1, pilotes[i].nom, minutes, seconds);
     }
 }
+
 
 // Function to convert time in seconds to minutes:seconds:milliseconds
 void format_temps(float seconds, char *formatted_time) {
