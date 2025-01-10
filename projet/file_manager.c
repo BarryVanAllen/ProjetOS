@@ -212,7 +212,7 @@ int write_to_csv(const char *filename, char **data, size_t num_rows, int append)
     }
 
     for (size_t i = 0; i < num_rows; i++) {
-        if (fprintf(file, "%s\n", data[i]) < 0) {
+        if (fputs(data[i], file) == EOF || fputc('\n', file) == EOF) {
             perror("Error writing to CSV file");
             fclose(file);
             return -1;
