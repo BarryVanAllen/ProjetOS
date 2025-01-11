@@ -60,7 +60,7 @@ Votre projet devra prendre en charge les choses suivantes.
 - [ ] Dans ces 2 derniers cas, on conserve toujours le meilleur temps de la voiture et celle-ci reste dans le classement
 - [x] A la fin de Q1, il reste 15 voitures qualifiées pour Q2 et les 5 dernières sont placées à la fin de la grille de départ (places 16 à 20)
 - [x] A la fin de Q2, il reste 10 voitures qualifiées pour Q3 et les 5 dernières sont placées dans les places 11 à 15 de la grille de départ
-- [ ] Le classement de Q3 attribue les places 1 à 10 de la grille de départ
+- [x] Le classement de Q3 attribue les places 1 à 10 de la grille de départ
 - [ ] Conserver sur fichier le classement final à la fin des 3 séances (ce sera l’ordre de départ pour la course sprint s’il y en a une ou pour la course du dimanche ), ainsi que les meilleurs temps en S1, S2, S3 et le meilleur tour.
 Attention ! Lors des essais et des qualifications, les voitures roulent quand elles veulent. Il n’y a pas un nombre déterminé de tours à faire.
 
