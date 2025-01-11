@@ -226,11 +226,12 @@ int write_to_csv(const char *filename, char **data, size_t num_rows, int append)
 /**
 * @param name of step so that the file saves the rankings
 * @param array of pilotes
+* @param nmbr of pilotes
 * @return nothing
 * adds to ranking file
 */
-void save_ranking(char *step, Pilote pilotes[]) {
-    char filelocation = "step/"
+void save_ranking(char *step, Pilote pilotes[], int nb_pilotes) {
+    char filelocation = "step/";
     strcat(filelocation, step);
     FILE *file = fopen(filelocation, "w");
 
@@ -239,10 +240,10 @@ void save_ranking(char *step, Pilote pilotes[]) {
         exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < c; i++) {
+    for (int i = 0; i < nb_pilotes; i++) {
         char best_lap_str[20];
-        snprintf(best_lap_str, sizeof(best_lap_str), "%.2f", mp->pilotes[i].temps_meilleur_tour);
-        fprintf(file, "%d --> %s\n", mp->pilotes[i].mum, best_lap_str);
+        snprintf(best_lap_str, sizeof(best_lap_str), "%.2f", pilotes[i].temps_meilleur_tour);
+        fprintf(file, "%d --> %s\n", pilotes[i].mum, best_lap_str);
     }
 
     if (fclose(file) != 0) {
