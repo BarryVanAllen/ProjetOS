@@ -228,7 +228,7 @@ int write_to_csv(const char *filename, char **data, size_t num_rows, int append)
 * @return nothing
 * adds to ranking file
 */
-void save_ranking(char *step,MemoirePartagee *mp) {
+void save_ranking(char *step, Pilote pilotes[]) {
     FILE *file = fopen(step, "w");
 
     if (file == NULL) {
