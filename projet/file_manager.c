@@ -243,7 +243,7 @@ void save_ranking(char *step, Pilote pilotes[], int nb_pilotes) {
     for (int i = 0; i < nb_pilotes; i++) {
         char best_lap_str[20];
         snprintf(best_lap_str, sizeof(best_lap_str), "%.2f", pilotes[i].temps_meilleur_tour);
-        fprintf(file, "%d --> %s\n", pilotes[i].mum, best_lap_str);
+        fprintf(file, "%d --> %s\n", pilotes[i].num, best_lap_str);
     }
 
     if (fclose(file) != 0) {
