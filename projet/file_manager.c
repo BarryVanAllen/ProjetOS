@@ -225,6 +225,7 @@ int write_to_csv(const char *filename, char **data, size_t num_rows, int append)
 
 /**
 * @param name of step so that the file saves the rankings
+* @param array of pilotes
 * @return nothing
 * adds to ranking file
 */
