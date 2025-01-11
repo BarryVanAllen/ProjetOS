@@ -65,6 +65,14 @@ void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer) {
     }
 }
 
+//fonction pour nettoyer les semaphores
+void cleanup(MemoirePartagee *mp, int shmid) {
+    shmdt(mp); // Détache la mémoire partagée
+    shmctl(shmid, IPC_RMID, NULL); // Supprime la mémoire partagée
+    sem_destroy(&mp->mutex); // Détruit les sémaphores
+    sem_destroy(&mp->mutLect);
+}
+
 void executer_tour(MemoirePartagee *mp, int nb_pilotes, const char *phase, int nb_tours) {
     pid_t pid;
     for (int tour = 1; tour <= nb_tours; tour++) {
@@ -177,21 +185,8 @@ int main(int argc, char *argv[]) {
 
     // Menu de sélection basé sur les arguments de ligne de commande
     if (argc != 2) {
-        printf("Usage: %s [session]\n", argv[0]);
-        printf("Sessions disponibles :\n");
-        printf("  fp1   : Free Practice 1\n");
-        printf("  fp2   : Free Practice 2\n");
-        printf("  fp3   : Free Practice 3\n");
-        printf("  q1    : Qualification Phase 1 (Q1)\n");
-        printf("  q2    : Qualification Phase 2 (Q2)\n");
-        printf("  q3    : Qualification Phase 3 (Q3)\n");
-        printf("  qualif: Qualification complète (Q1, Q2, Q3)\n");
-        printf("  race  : Course\n");
-        printf("  all   : Tout exécuter (Essais libres, qualifications, course)\n");
-        shmdt(mp);
-        shmctl(shmid, IPC_RMID, NULL);
-        sem_destroy(&mp->mutex);
-        sem_destroy(&mp->mutLect);
+        menu(argv[0]);
+        cleanup(mp, shmid);
         return 1;
     }
     
@@ -199,10 +194,7 @@ int main(int argc, char *argv[]) {
     traiter_session(argv[1], mp);
 
     // Nettoyage
-    shmdt(mp);
-    shmctl(shmid, IPC_RMID, NULL);
-    sem_destroy(&mp->mutex);
-    sem_destroy(&mp->mutLect);
+    cleanup(mp, shmid);
 
     return 0;
 }
