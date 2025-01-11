@@ -193,76 +193,13 @@ int main(int argc, char *argv[]) {
         sem_destroy(&mp->mutLect);
         return 1;
     }
-
-    // Exécution de la session spécifiée
-    if (strcmp(argv[1], "fp1") == 0) {
-        printf("Début de Free Practice 1\n");
-        executer_tour(mp, NB_PILOTES, "FP1", NB_TOURS_ESSAIS);
-    } else if (strcmp(argv[1], "fp2") == 0) {
-        printf("Début de Free Practice 2\n");
-        executer_tour(mp, NB_PILOTES, "FP2", NB_TOURS_ESSAIS);
-    } else if (strcmp(argv[1], "fp3") == 0) {
-        printf("Début de Free Practice 3\n");
-        executer_tour(mp, NB_PILOTES, "FP3", NB_TOURS_ESSAIS);
-    } else if (strcmp(argv[1], "q1") == 0) {
-        printf("Début de Qualification Phase 1 (Q1)\n");
-        executer_tour(mp, NB_PILOTES, "Q1", NB_TOURS_QUALIF);
-        printf("Éliminés après Q1 :\n");
-        for (int i = 15; i < NB_PILOTES; i++) printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
-    } else if (strcmp(argv[1], "q2") == 0) {
-        printf("Début de Qualification Phase 2 (Q2)\n");
-        executer_tour(mp, 15, "Q2", NB_TOURS_QUALIF);
-        printf("Éliminés après Q2 :\n");
-        for (int i = 10; i < 15; i++) printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
-    } else if (strcmp(argv[1], "q3") == 0) {
-        printf("Début de Qualification Phase 3 (Q3)\n");
-        executer_tour(mp, 10, "Q3", NB_TOURS_QUALIF);
-        printf("Résultats finaux de Q3 (Top 10) :\n");
-        for (int i = 0; i < 10; i++) printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
-    } else if (strcmp(argv[1], "qualif") == 0) {
-        printf("Début de la Qualification complète\n");
-        qualification(mp);
-    } else if (strcmp(argv[1], "race") == 0) {
-        printf("Début de la Course\n");
-        course(mp);
-    } else if (strcmp(argv[1], "all") == 0) {
-        printf("Début du programme complet : Essais libres, Qualifications, Course\n");
-
-        // Exécution des essais libres
-        printf("\n--- Free Practice 1 ---\n");
-        executer_tour(mp, NB_PILOTES, "FP1", NB_TOURS_ESSAIS);
-        printf("\n--- Free Practice 2 ---\n");
-        executer_tour(mp, NB_PILOTES, "FP2", NB_TOURS_ESSAIS);
-        printf("\n--- Free Practice 3 ---\n");
-        executer_tour(mp, NB_PILOTES, "FP3", NB_TOURS_ESSAIS);
-
-        // Exécution des qualifications
-        printf("\n--- Qualification Phase 1 (Q1) ---\n");
-        executer_tour(mp, NB_PILOTES, "Q1", NB_TOURS_QUALIF);
-        printf("Éliminés après Q1 :\n");
-        for (int i = 15; i < NB_PILOTES; i++) printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
-
-        printf("\n--- Qualification Phase 2 (Q2) ---\n");
-        executer_tour(mp, 15, "Q2", NB_TOURS_QUALIF);
-        printf("Éliminés après Q2 :\n");
-        for (int i = 10; i < 15; i++) printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
-
-        printf("\n--- Qualification Phase 3 (Q3) ---\n");
-        executer_tour(mp, 10, "Q3", NB_TOURS_QUALIF);
-        printf("Résultats finaux de Q3 (Top 10) :\n");
-        for (int i = 0; i < 10; i++) printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
-
-        // Exécution de la course
-        printf("\n--- Course ---\n");
-        course(mp);
-    } else {
-        printf("Session inconnue : %s\n", argv[1]);
-        printf("Sessions disponibles : fp1, fp2, fp3, q1, q2, q3, qualif, race, all\n");
-    }
+    
+    // Appeler la fonction pour gérer la session
+    traiter_session(argv[1], mp);
 
     // Nettoyage
     shmdt(mp);
-    shmctl(shmid, IPC_RMID, NULL); // Suppression de la mémoire partagée
+    shmctl(shmid, IPC_RMID, NULL);
     sem_destroy(&mp->mutex);
     sem_destroy(&mp->mutLect);
 
