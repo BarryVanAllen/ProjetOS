@@ -36,9 +36,11 @@ void afficher_resultats(Pilote pilotes[], int nb_pilotes, const char *phase) {
 
 
 // Function to convert time in seconds to minutes:seconds:milliseconds
-void format_temps(float seconds, char *formatted_time) {
-    int minutes = (int)(seconds / 60);
-    seconds = fmod(seconds, 60);
-    int milliseconds = (int)((seconds - (int)seconds) * 1000);
-    sprintf(formatted_time, "%02d:%05.2f", minutes, seconds + milliseconds / 1000.0);
+void format_temps(double temps_en_secondes, char *resultat) {
+    int minutes = (int)(temps_en_secondes / 60); // Extraire les minutes
+    int secondes = (int)(temps_en_secondes) % 60; // Extraire les secondes
+    int millisecondes = (int)((temps_en_secondes - (int)temps_en_secondes) * 1000); // Extraire les millisecondes
+
+    // Formater le temps
+    sprintf(resultat, "%d:%02d:%03d", minutes, secondes, millisecondes);
 }
