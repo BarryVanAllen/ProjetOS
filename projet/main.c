@@ -11,6 +11,7 @@
 #include "affichage.h"
 #include "file_manager.h"
 #include "types.h"
+#include "sessions.c"
 
 #define NB_TOURS_ESSAIS 20
 #define NB_TOURS_QUALIF 15
