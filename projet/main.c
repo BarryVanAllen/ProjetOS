@@ -13,12 +13,14 @@
 #include "types.h"
 #include "sessions.h"
 
+
 #define NB_TOURS_ESSAIS 20
 #define NB_TOURS_QUALIF 15
 #define NB_TOURS_COURSE 50
 #define VARIATION_MIN -3000 // Minimum time variation in milliseconds
 #define VARIATION_MAX 3000  // Maximum time variation in milliseconds
 #define BASE_TEMPS_SEC 30.000
+
 
 //fonction qui genere un temps aleatoire par secteurs
 float generer_temps_secteur() {
