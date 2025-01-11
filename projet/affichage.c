@@ -44,3 +44,17 @@ void format_temps(double temps_en_secondes, char *resultat) {
     // Formater le temps
     sprintf(resultat, "%d:%02d:%03d", minutes, secondes, millisecondes);
 }
+
+void menu(char *program_name) {
+    printf("Usage: %s [session]\n", program_name);
+    printf("Sessions disponibles :\n");
+    printf("  fp1   : Free Practice 1\n");
+    printf("  fp2   : Free Practice 2\n");
+    printf("  fp3   : Free Practice 3\n");
+    printf("  q1    : Qualification Phase 1 (Q1)\n");
+    printf("  q2    : Qualification Phase 2 (Q2)\n");
+    printf("  q3    : Qualification Phase 3 (Q3)\n");
+    printf("  qualif: Qualification complète (Q1, Q2, Q3)\n");
+    printf("  race  : Course\n");
+    printf("  all   : Tout exécuter (Essais libres, qualifications, course)\n");
+}
