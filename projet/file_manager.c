@@ -228,17 +228,22 @@ int write_to_csv(const char *filename, char **data, size_t num_rows, int append)
 * @return nothing
 * adds to ranking file
 */
-void save_ranking(char *step) {
-    
+void save_ranking(char *step,MemoirePartagee *mp) {
     FILE *file = fopen(step, "w");
 
-    if (file == NULL) perror("fopen failed !"), exit(EXIT_FAILURE);
-
-    for (int i = 0; i < circuit.number_of_cars; i++) {
-        char best_lap_str[10];
-        to_string(car_array[i].best_lap_time, best_lap_str);
-        fprintf(file, "%d --> %s\n", car_array[i].id, best_lap_str);
+    if (file == NULL) {
+        perror("Open failed!");
+        exit(EXIT_FAILURE);
     }
 
-    if (fclose(file) != 0) perror("fclose failed !"), exit(EXIT_FAILURE);
+    for (int i = 0; i < c; i++) {
+        char best_lap_str[20];
+        snprintf(best_lap_str, sizeof(best_lap_str), "%.2f", mp->pilotes[i].temps_meilleur_tour);
+        fprintf(file, "%d --> %s\n", mp->pilotes[i].mum, best_lap_str);
+    }
+
+    if (fclose(file) != 0) {
+        perror("fclose failed!");
+        exit(EXIT_FAILURE);
+    }
 }
