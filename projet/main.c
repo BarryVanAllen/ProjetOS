@@ -108,8 +108,8 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, const char *phase, int n
         afficher_resultats(mp->pilotes, nb_pilotes, phase);
         fin_gestion_semaphore(mp, 0); // Fin de la section critique
         gestion_semaphore(mp, 1); // Section critique pour les écrivains
-        save_ranking(phase);
-        gestion_semaphore(mp, 0); // Section critique pour les écrivains
+        save_ranking(phase, mp->pilotes);
+        fin_gestion_semaphore(mp, 1); 
         usleep(1000000); // Pause de 1 seconde
     }
 }
@@ -149,20 +149,6 @@ void qualification(MemoirePartagee *mp) {
 void course(MemoirePartagee *mp) {
     printf("Début de la course\n");
     executer_tour(mp, NB_PILOTES, "Course", NB_TOURS_COURSE);
-}
-
-//fonction pour ecrire les resultats du grand prix dans un fichier csv
-void ecrire_resultats_csv(const char *filename, Pilote pilotes[], int nb_pilotes, const char *session) {
-    char **data = malloc(nb_pilotes * sizeof(char *));
-    for (int i = 0; i < nb_pilotes; i++) {
-        char formatted_time[50];
-        format_temps(pilotes[i].temps_meilleur_tour, formatted_time);
-        data[i] = malloc(100 * sizeof(char)); // Exemple de taille
-        snprintf(data[i], 100, "%s,%s,%f", pilotes[i].nom, session, pilotes[i].temps_meilleur_tour);
-    }
-    write_to_csv(filename, data, nb_pilotes, 0);
-    for (int i = 0; i < nb_pilotes; i++) free((void *)data[i]);
-    free(data);
 }
 
 //fonction principal qui lance le programme
