@@ -11,7 +11,7 @@
 #include "affichage.h"
 #include "file_manager.h"
 #include "types.h"
-#include "sessions.c"
+#include "sessions.h"
 
 #define NB_TOURS_ESSAIS 20
 #define NB_TOURS_QUALIF 15
@@ -33,11 +33,13 @@ void generer_temps_pilote(Pilote *pilote) {
     pilote->dernier_temps_tour = pilote->secteur_1 + pilote->secteur_2 + pilote->secteur_3;
 }
 
-//fonction qui trie les pilotes par rapport a leurs meilleurs temps
 void tri_pilotes(Pilote pilotes[], int nb_pilotes) {
     for (int i = 0; i < nb_pilotes - 1; i++) {
         for (int j = 0; j < nb_pilotes - i - 1; j++) {
-            if (pilotes[j].temps_meilleur_tour > pilotes[j + 1].temps_meilleur_tour) {
+            if ((pilotes[j].temps_course_total > pilotes[j + 1].temps_course_total) ||
+                (pilotes[j].temps_course_total == pilotes[j + 1].temps_course_total &&
+                 pilotes[j].temps_meilleur_tour > pilotes[j + 1].temps_meilleur_tour)) {
+                // Échange des pilotes
                 Pilote temp = pilotes[j];
                 pilotes[j] = pilotes[j + 1];
                 pilotes[j + 1] = temp;
@@ -87,6 +89,7 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, const char *phase, int n
                 srand(getpid() + time(NULL));
                 gestion_semaphore(mp, 1); // Section critique pour les écrivains
                 generer_temps_pilote(&mp->pilotes[i]);
+                mp->pilotes[i].temps_course_total += mp->pilotes[i].dernier_temps_tour;
                 if (mp->pilotes[i].temps_meilleur_tour == 0.0 || mp->pilotes[i].dernier_temps_tour < mp->pilotes[i].temps_meilleur_tour) {
                     mp->pilotes[i].temps_meilleur_tour = mp->pilotes[i].dernier_temps_tour;
                 }
