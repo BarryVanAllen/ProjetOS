@@ -82,7 +82,7 @@ void cleanup(MemoirePartagee *mp, int shmid) {
 }
 
 //fonction pour creer les tours de piste
-void executer_tour(MemoirePartagee *mp, int nb_pilotes, const char *phase, int nb_tours) {
+void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tours) {
     pid_t pid;
     for (int tour = 1; tour <= nb_tours; tour++) {
         for (int i = 0; i < nb_pilotes; i++) {
@@ -108,7 +108,7 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, const char *phase, int n
         afficher_resultats(mp->pilotes, nb_pilotes, phase);
         fin_gestion_semaphore(mp, 0); // Fin de la section critique
         gestion_semaphore(mp, 1); // Section critique pour les écrivains
-        save_ranking(phase, mp->pilotes);
+        save_ranking(phase, mp->pilotes, nb_pilotes);
         fin_gestion_semaphore(mp, 1); 
         usleep(1000000); // Pause de 1 seconde
     }
