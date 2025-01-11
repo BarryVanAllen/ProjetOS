@@ -89,6 +89,9 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, const char *phase, int n
                 srand(getpid() + time(NULL));
                 gestion_semaphore(mp, 1); // Section critique pour les écrivains
                 generer_temps_pilote(&mp->pilotes[i]);
+
+                // Mise à jour du numéro de tour pour chaque pilote
+                mp->pilotes[i].num_tour = tour;
                 mp->pilotes[i].temps_course_total += mp->pilotes[i].dernier_temps_tour;
                 if (mp->pilotes[i].temps_meilleur_tour == 0.0 || mp->pilotes[i].dernier_temps_tour < mp->pilotes[i].temps_meilleur_tour) {
                     mp->pilotes[i].temps_meilleur_tour = mp->pilotes[i].dernier_temps_tour;
