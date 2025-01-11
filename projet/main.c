@@ -107,6 +107,9 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, const char *phase, int n
         tri_pilotes(mp->pilotes, nb_pilotes);
         afficher_resultats(mp->pilotes, nb_pilotes, phase);
         fin_gestion_semaphore(mp, 0); // Fin de la section critique
+        gestion_semaphore(mp, 1); // Section critique pour les écrivains
+        save_ranking(phase);
+        gestion_semaphore(mp, 0); // Section critique pour les écrivains
         usleep(1000000); // Pause de 1 seconde
     }
 }
