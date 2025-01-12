@@ -45,7 +45,7 @@ Pilote* removeLastFiveElements(Pilote arr[], int size, Pilote removed[], int *re
         }
         *removedSize += 5;  // Increase the size of the removed array
         // Create a new array to hold the remaining elements
-        Pilote *newArray = (Pilote*)malloc((*size - 5) * sizeof(Pilote));
+        Pilote *newArray = (Pilote*)malloc((int)(*size - 5) * sizeof(Pilote));
         if (newArray == NULL) {
             // Handle memory allocation failure
             printf("Memory allocation failed\n");
