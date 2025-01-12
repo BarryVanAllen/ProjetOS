@@ -61,18 +61,6 @@ void cleanup(MemoirePartagee *mp, int shmid) {
 
 //fonction pour creer les tours de piste
 void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tours) {
-    // Perform the elimination
-    for (int i = 0; i < length; i++) {
-        printf("1");
-        for (int j = 0; j < nb_pilotes; j++) {
-            // If a pilote matches an elimination target, remove it from the pilotes array
-            if (mp->pilotes[j].num == elimination[i].num) {
-                removePilote(mp->pilotes, &nb_pilotes, j);
-                nb_pilotes--; // Decrement the total number of pilotes
-                break; // Exit the inner loop after removing one pilote
-            }
-        }
-    }
     pid_t pid;
     for (int tour = 1; tour <= nb_tours; tour++) {
         for (int i = 0; i < nb_pilotes; i++) {
