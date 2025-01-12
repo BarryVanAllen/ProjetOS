@@ -47,7 +47,7 @@ Votre projet devra prendre en charge les choses suivantes.
 - [ ] Savoir si une voiture est aux stands (P)
 - [ ] Savoir si une voiture est out (abandon de la séance)
 - [ ] Dans ces 2 derniers cas, on conserve toujours le meilleur temps de la voiture et celle-ci reste dans le classement
-- [ ] Conserver sur fichier le classement final à la fin de chaque séance ainsi que les meilleurs temps S1, S2 et S3 et le meilleur tour.
+- [x] Conserver sur fichier le classement final à la fin de chaque séance ainsi que les meilleurs temps S1, S2 et S3 et le meilleur tour.
 
 
 #### Lors des qualifications (Q1, Q2, Q3) :
