@@ -14,12 +14,12 @@ void gestion_semaphore(MemoirePartagee *mp, int is_writer);
 void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer);
 
 /**
- * Reads the content of elim and returns an array of Pilote structures.
+ * Reads the content of elim and applys them to the paramater.
  * Assumes the file contains one Pilote per line.
- * @return A pointer to the array of Pilote structures, or NULL on failure.
+ * @parameters an array of pilotes of Type Pilote.
  *         Caller must free the array after use.
  */
-Pilote read_elim();
+void read_elim(Pilote *pilotes);
 
 /**
  * Writes an array of Pilote structures to a file.
