@@ -7,40 +7,23 @@
 #include "types.h"
 
 /**
- * Retrieves the path to a resource file.
- * @param file_name Name of the resource file.
- * @return Full path to the resource file.
+ * Reads the content of elim and returns an array of Pilote structures.
+ * Assumes the file contains one Pilote per line.
+ * @return A pointer to the array of Pilote structures, or NULL on failure.
+ *         Caller must free the array after use.
  */
-char *get_resources_file(char *file_name);
+Pilote *read_elim();
 
 /**
- * Reads the content of a file into a dynamically allocated buffer.
+ * Writes an array of Pilote structures to a file.
  * 
- * @param filename The name of the file to read.
- * @param buffer_size The maximum size of the buffer to allocate.
- * @return A pointer to the buffer containing file contents, or NULL on failure.
- *         Caller must free the buffer after use.
- */
-char *read_file(const char *filename, size_t *buffer_size);
-
-/**
- * Writes data to a file.
- * 
- * @param filename The name of the file to write to.
- * @param data The data to write to the file.
+ * @param pilotes The array of Pilote structures to write to the file.
+ * @param num_pilotes The number of Pilote structures in the array.
  * @param append If non-zero, data will be appended; otherwise, the file will be overwritten.
  * @return 0 on success, or -1 on failure.
  */
-int write_file(const char *filename, char *data, int append);
+int write_pilotes_to_file(Pilote *pilotes, size_t num_pilotes, int append)
 
-/**
- * Copies the contents of one file to another.
- * 
- * @param source_file The source file to copy from.
- * @param destination_file The destination file to copy to.
- * @return 0 on success, or -1 on failure.
- */
-int copy_file(const char *source_file, char *destination_file);
 
 /**
  * Parses all rows from a CSV file into an array of Pilote structs.
@@ -52,12 +35,6 @@ int copy_file(const char *source_file, char *destination_file);
  */
 int parse_csv_to_pilotes(const char *filename, Pilote **pilotes, int *count) ;
 
-/**
- * Prints the entire content of a CSV file.
- * 
- * @param filename The name of the CSV file.
- */
-void print_csv(char *filename);
 
 /**
  * Writes data to a CSV file.
