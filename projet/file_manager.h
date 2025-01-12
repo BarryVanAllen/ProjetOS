@@ -80,4 +80,12 @@ int write_to_csv(const char *filename, char **data, size_t num_rows, int append)
 */
 void save_ranking(char *step, Pilote pilotes[], int nb_pilotes);
 
+/**
+ * Counts the number of lines in a given file.
+ *
+ * @param filename The name of the file to read.
+ * @return The number of lines in the file, or -1 if there was an error opening the file.
+ */
+int count_lines(char *filename);
+
 #endif // FILE_UTILS_H
