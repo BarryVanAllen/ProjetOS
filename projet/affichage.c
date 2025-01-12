@@ -2,6 +2,34 @@
 #include <math.h>
 #include "types.h"
 
+// Fonction pour trouver le pilote le plus rapide dans chaque secteur
+void afficher_meilleurs_secteurs(Pilote pilotes[], int nb_pilotes) {
+    Pilote meilleur_secteur_1 = pilotes[0];
+    Pilote meilleur_secteur_2 = pilotes[0];
+    Pilote meilleur_secteur_3 = pilotes[0];
+
+    for (int i = 1; i < nb_pilotes; i++) {
+        if (pilotes[i].secteur_1 < meilleur_secteur_1.secteur_1) {
+            meilleur_secteur_1 = pilotes[i];
+        }
+        if (pilotes[i].secteur_2 < meilleur_secteur_2.secteur_2) {
+            meilleur_secteur_2 = pilotes[i];
+        }
+        if (pilotes[i].secteur_3 < meilleur_secteur_3.secteur_3) {
+            meilleur_secteur_3 = pilotes[i];
+        }
+    }
+
+    printf("\n--- Meilleurs Secteurs ---\n");
+    printf("┌─────────────┬────────────┬────────────┐\n");
+    printf("| Secteur     | Pilote     | Temps      |\n");
+    printf("├─────────────┼────────────┼────────────┤\n");
+    // Affichage des meilleurs secteurs
+    printf("| Secteur 1   | %-10d | %-11.3f|\n", meilleur_secteur_1.num, meilleur_secteur_1.secteur_1);
+    printf("| Secteur 2   | %-10d | %-11.3f|\n", meilleur_secteur_2.num, meilleur_secteur_2.secteur_2);
+    printf("| Secteur 3   | %-10d | %-11.3f|\n", meilleur_secteur_3.num, meilleur_secteur_3.secteur_3);
+    printf("└─────────────┴────────────┴────────────┘\n");
+}
 
 void afficher_resultats(Pilote pilotes[], int nb_pilotes, const char *phase) {
     printf("\033[H\033[J"); // Nettoie l'écran (optionnel)
@@ -19,21 +47,22 @@ void afficher_resultats(Pilote pilotes[], int nb_pilotes, const char *phase) {
         float best_seconds = pilotes[i].temps_meilleur_tour - (best_minutes * 60);
 
         // Affichage des données alignées avec des largeurs fixes
-	printf("│ %-10d│ %-11d│ %-11.3f│ %-11.3f│ %-11.3f│  %d:%06.3f  │ %-11d│   %d:%06.3f       │ %-9.3f │\n",
-       i + 1,                     // Position
-       pilotes[i].num,            // Numéro du pilote
-       pilotes[i].secteur_1,      // Temps secteur 1
-       pilotes[i].secteur_2,      // Temps secteur 2
-       pilotes[i].secteur_3,      // Temps secteur 3
-       minutes, seconds,          // Dernier temps tour (minutes et secondes)
-	pilotes[i].num_tour,       // Nombre total de tours
-       best_minutes, best_seconds,// Meilleur temps tour (minutes et secondes)
-       pilotes[i].temps_meilleur_tour); // Temps total du meilleur tour
-
-
+        printf("│ %-10d│ %-11d│ %-11.3f│ %-11.3f│ %-11.3f│  %d:%06.3f  │ %-11d│   %d:%06.3f       │ %-9.3f │\n",
+               i + 1,                     // Position
+               pilotes[i].num,            // Numéro du pilote
+               pilotes[i].secteur_1,      // Temps secteur 1
+               pilotes[i].secteur_2,      // Temps secteur 2
+               pilotes[i].secteur_3,      // Temps secteur 3
+               minutes, seconds,          // Dernier temps tour (minutes et secondes)
+               pilotes[i].num_tour,       // Nombre total de tours
+               best_minutes, best_seconds,// Meilleur temps tour (minutes et secondes)
+               pilotes[i].temps_meilleur_tour); // Temps total du meilleur tour
     }
 
     printf("└───────────┴────────────┴────────────┴────────────┴────────────┴────────────┴────────────┴──────────────────┴───────────┘\n");
+
+    // Affichage des meilleurs temps dans chaque secteur
+    afficher_meilleurs_secteurs(pilotes, nb_pilotes);
 }
 
 
