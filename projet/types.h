@@ -1,4 +1,3 @@
-// types.h
 #include <semaphore.h>
 #ifndef TYPES_H
 #define TYPES_H
@@ -13,6 +12,7 @@ typedef struct {
     float secteur_1;
     float secteur_2;
     float secteur_3;
+    int num_tour;
 } Pilote;
 
 typedef struct {
