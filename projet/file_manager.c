@@ -35,7 +35,7 @@ void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer) {
 
 void save_eliminated_cars(const char *filetosave, MemoirePartagee *mp){
 
-    FILE *file = fopen(filetosave, "w");
+    FILE *file = fopen(*filetosave, "w");
 
     if (file == NULL)
         perror("fopen failed !"), exit(EXIT_FAILURE);
@@ -57,7 +57,7 @@ void read_eliminated_cars(const char *filetoread, int array[]) {
     char results[5];
 
     // Open the file for reading
-    FILE *file = fopen(filetoread, "r");
+    FILE *file = fopen(*filetoread, "r");
     if (file == NULL) {
         perror("fopen failed !");
         exit(EXIT_FAILURE);
