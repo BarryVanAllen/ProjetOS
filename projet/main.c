@@ -245,14 +245,13 @@ int main(int argc, char *argv[]) {
     }
 
   // Menu de sélection basé sur les arguments de ligne de commande
-  //if (argc != 2) {
-   // menu(argv[0]);
-   // cleanup(mp, shmid);
-   // return 1;
-  //}
+  if (argc != 2) {
+    menu(argv[0]);
+    cleanup(mp, shmid);
+    return 1;
+  }
   //Appeler la fonction pour gérer la session
-  //traiter_session(argv[1], mp);
-    traiter_session("q1", mp);
+  traiter_session(argv[1], mp);
     // Nettoyage
     cleanup(mp, shmid);
 
