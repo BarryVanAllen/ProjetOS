@@ -13,24 +13,6 @@ void gestion_semaphore(MemoirePartagee *mp, int is_writer);
 //idem qu'avant
 void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer);
 
-/**
- * Reads the content of elim and applys them to the paramater.
- * Assumes the file contains one Pilote per line.
- * @parameters an array of pilotes of Type Pilote.
- *         Caller must free the array after use.
- */
-void read_elim(Pilote *pilotes);
-
-/**
- * Writes an array of Pilote structures to a file.
- * 
- * @param pilotes The array of Pilote structures to write to the file.
- * @param num_pilotes The number of Pilote structures in the array.
- * @param append If non-zero, data will be appended; otherwise, the file will be overwritten.
- * @return 0 on success, or -1 on failure.
- */
-int write_pilotes_to_file(Pilote *pilotes, size_t num_pilotes, int append);
-
 
 /**
  * Parses all rows from a CSV file into an array of Pilote structs.
