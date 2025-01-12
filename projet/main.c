@@ -21,8 +21,6 @@
 #define VARIATION_MAX 3000  // Maximum time variation in milliseconds
 #define BASE_TEMPS_SEC 30.000
 
-Pilote eliminated;
-
 //fonction qui genere un temps aleatoire par secteurs
 float generer_temps_secteur() {
     return BASE_TEMPS_SEC + ((rand() % (VARIATION_MAX - VARIATION_MIN + 1)) + VARIATION_MIN) / 1000.0;
@@ -68,6 +66,14 @@ Pilote* removeLastFiveElements(Pilote arr[], int size, Pilote removed[], int *re
     }
 }
 
+// Function to remove a pilot by shifting remaining elements
+void removePilote(Pilote *pilotes, int *size, int index) {
+    // Shift all elements after the 'index' to the left by 1 position
+    for (int i = index; i < (*size) - 1; i++) {
+        pilotes[i] = pilotes[i + 1];  // Move the next pilot to the current position
+    }
+    (*size)--;  // Reduce the size of the array since we removed an element
+}
 
 void tri_pilotes(Pilote pilotes[], int nb_pilotes) {
     for (int i = 0; i < nb_pilotes - 1; i++) {
@@ -95,8 +101,9 @@ void cleanup(MemoirePartagee *mp, int shmid) {
 //fonction pour creer les tours de piste
 void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tours) {
     gestion_semaphore(mp, 0); // Section critique pour les lecteurs
-    eliminated = read_elim();
-    int length = sizeof(eliminated) / sizeof(eliminated[0]);
+    Pilote *elimination = malloc(sizeof(Pilote) * 10);;
+    read_elim(elimination);
+    int length = sizeof(elimination) / sizeof(elimination[0]);
     fin_gestion_semaphore(mp, 0); // Fin de la section critique
     if(phase == "Q2"){
         if (length != 15){
@@ -116,20 +123,18 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tour
             return;
         }
     }
-    gestion_semaphore(mp, 1); // Section critique pour les écrivains
-    
-    // Dynamically allocate memory for mp->pilotes  based on the size of eliminated
-    mp->pilotes = (Pilote)malloc(sizeof(mp->pilotes)-sizeof(eliminated)); 
-
-    // Check if memory allocation was successful
-    if (mp->pilotes  == NULL) {
-        printf("Memory allocation failed!\n");
-        return;  // Exit if memory allocation fails
+    // Perform the elimination
+    for (int i = 0; i < length; i++) {
+        printf("1");
+        for (int j = 0; j < nb_pilotes; j++) {
+            // If a pilote matches an elimination target, remove it from the pilotes array
+            if (mp->pilotes[j].num == elimination[i].num) {
+                removePilote(mp->pilotes, &nb_pilotes, j);
+                nb_pilotes--; // Decrement the total number of pilotes
+                break; // Exit the inner loop after removing one pilote
+            }
+        }
     }
-    // Copy the contents of array2 into array1
-    memcpy(mp->pilotes, eliminated, sizeof(eliminated));
-    fin_gestion_semaphore(mp, 1);
-
     pid_t pid;
     for (int tour = 1; tour <= nb_tours; tour++) {
         for (int i = 0; i < nb_pilotes; i++) {
@@ -154,15 +159,15 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tour
         tri_pilotes(mp->pilotes, nb_pilotes);
         afficher_resultats(mp->pilotes, nb_pilotes, phase);
         fin_gestion_semaphore(mp, 0); // Fin de la section critique
-        gestion_semaphore(mp, 1); // Section critique pour les écrivains
-        save_ranking(phase, mp->pilotes, nb_pilotes);
-        if(phase == "Q1" || phase == "Q2"){
-            removeLastFiveElements(mp->pilotes, sizeof(mp->pilotes) / sizeof(mp->pilotes[0], eliminated, length);
-            write_pilotes_to_file(eliminated, legnth, 0);
-        }
-        fin_gestion_semaphore(mp, 1); 
         usleep(1000000); // Pause de 1 seconde
     }
+    gestion_semaphore(mp, 1); // Section critique pour les écrivains
+    save_ranking(phase, mp->pilotes, nb_pilotes);
+    if(phase == "Q1" || phase == "Q2"){
+      removeLastFiveElements(mp->pilotes, nb_pilotes, elimination, &length);
+      write_pilotes_to_file(elimination, length, 0);
+    }
+    fin_gestion_semaphore(mp, 1); 
 }
 
 //fonction appeler pour commencer les free practice
@@ -177,23 +182,22 @@ void free_practice(MemoirePartagee *mp, int repeat) {
 
 //fonction appeler pour commencer les qualifs
 void qualification(MemoirePartagee *mp) {
-    const int pilotes_q1 = NB_PILOTES
     printf("Début de la qualification\n");
 
     // Phase Q1
-    executer_tour(mp, pilotes_q1, "Q1", NB_TOURS_QUALIF);
+    executer_tour(mp, NB_PILOTES, "Q1", NB_TOURS_QUALIF);
     printf("Éliminés après Q1 :\n");
-    for (int i = pilotes_q2; i < NB_PILOTES; i++) printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
+    for (int i = NB_PILOTES; i < NB_PILOTES; i++) printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
     
     // Phase Q2
-    executer_tour(mp, pilotes_q2, "Q2", NB_TOURS_QUALIF);
+    executer_tour(mp, NB_PILOTES, "Q2", NB_TOURS_QUALIF);
     printf("Éliminés après Q2 :\n");
-    for (int i = pilotes_q3; i < pilotes_q2; i++) printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
+    for (int i = NB_PILOTES; i < NB_PILOTES; i++) printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
     
     // Phase Q3
-    executer_tour(mp, pilotes_q3, "Q3", NB_TOURS_QUALIF);
+    executer_tour(mp, NB_PILOTES, "Q3", NB_TOURS_QUALIF);
     printf("Résultats finaux de Q3 (Top 10) :\n");
-    for (int i = 0; i < pilotes_q3; i++) printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
+    for (int i = 0; i < NB_PILOTES; i++) printf("%d. Pilote: %s\n", i + 1, mp->pilotes[i].nom);
 }
 
 //fonction appeler pour commencer la course
@@ -240,19 +244,17 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // Menu de sélection basé sur les arguments de ligne de commande
-    if (argc != 2) {
-        menu(argv[0]);
-        cleanup(mp, shmid);
-        return 1;
-    }
-    
-    // Appeler la fonction pour gérer la session
-    traiter_session(argv[1], mp);
-
+  // Menu de sélection basé sur les arguments de ligne de commande
+  //if (argc != 2) {
+   // menu(argv[0]);
+   // cleanup(mp, shmid);
+   // return 1;
+  //}
+  //Appeler la fonction pour gérer la session
+  //traiter_session(argv[1], mp);
+    traiter_session("q1", mp);
     // Nettoyage
     cleanup(mp, shmid);
 
     return 0;
 }
-
