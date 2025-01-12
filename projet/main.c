@@ -21,6 +21,7 @@
 #define VARIATION_MAX 3000  // Maximum time variation in milliseconds
 #define BASE_TEMPS_SEC 30.000
 
+Pilote Eliminated[10]
 
 //fonction qui genere un temps aleatoire par secteurs
 float generer_temps_secteur() {
@@ -34,6 +35,39 @@ void generer_temps_pilote(Pilote *pilote) {
     pilote->secteur_3 = generer_temps_secteur();
     pilote->dernier_temps_tour = pilote->secteur_1 + pilote->secteur_2 + pilote->secteur_3;
 }
+
+Pilote* removeLastFiveElements(Pilote arr[], int *size, Pilote removed[], int *removedSize) {
+    // Check if there are at least 5 elements to remove
+    if (*size >= 5) {
+        // Append the last 5 elements to the removed array
+        for (int i = 0; i < 5; i++) {
+            removed[*removedSize + i] = arr[*size - 5 + i];
+        }
+        *removedSize += 5;  // Increase the size of the removed array
+        // Create a new array to hold the remaining elements
+        Pilote *newArray = (Pilote*)malloc((*size - 5) * sizeof(Pilote));
+        if (newArray == NULL) {
+            // Handle memory allocation failure
+            printf("Memory allocation failed\n");
+            return NULL;
+        }
+        // Copy the remaining elements to the new array
+        for (int i = 0; i < *size - 5; i++) {
+            newArray[i] = arr[i];
+        }
+
+        // Adjust the size of the original array
+        *size -= 5;
+
+        // Return the new array
+        return newArray;
+    } else {
+        // If fewer than 5 elements, clear the original array and return NULL
+        *size = 0;
+        return NULL;
+    }
+}
+
 
 void tri_pilotes(Pilote pilotes[], int nb_pilotes) {
     for (int i = 0; i < nb_pilotes - 1; i++) {
@@ -50,29 +84,6 @@ void tri_pilotes(Pilote pilotes[], int nb_pilotes) {
     }
 }
 
-//fonction pour la gestions des semaphores ecriture et lecture
-void gestion_semaphore(MemoirePartagee *mp, int is_writer) {
-    if (is_writer) {
-        sem_wait(&mp->mutex); // Protection des écrivains
-    } else {
-        sem_wait(&mp->mutLect);
-        mp->nbrLect++;
-        if (mp->nbrLect == 1) sem_wait(&mp->mutex); // Premier lecteur bloque les écrivains
-        sem_post(&mp->mutLect);
-    }
-}
-//idem qu'avant
-void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer) {
-    if (is_writer) {
-        sem_post(&mp->mutex); // Libération des écrivains
-    } else {
-        sem_wait(&mp->mutLect);
-        mp->nbrLect--;
-        if (mp->nbrLect == 0) sem_post(&mp->mutex); // Dernier lecteur débloque les écrivains
-        sem_post(&mp->mutLect);
-    }
-}
-
 //fonction pour nettoyer les semaphores
 void cleanup(MemoirePartagee *mp, int shmid) {
     shmdt(mp); // Détache la mémoire partagée
@@ -83,6 +94,42 @@ void cleanup(MemoirePartagee *mp, int shmid) {
 
 //fonction pour creer les tours de piste
 void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tours) {
+    gestion_semaphore(mp, 0); // Section critique pour les lecteurs
+    Pilote eliminated[] = read_elim();
+    int length = sizeof(eliminated) / sizeof(eliminated[0]);
+    fin_gestion_semaphore(mp, 0); // Fin de la section critique
+    if(phase == "Q2"){
+        if (length != 15){
+            printf("Nombre de Pilotes incompatible"); 
+            return;
+        }
+    }
+    if(phase == "Q3"){
+        if (length > 10){
+            printf("Nombre de Pilotes incompatible");
+            return;
+        }
+    }
+    if(phase == "Course"){
+        if (length > 10){
+            printf("Nombre de Pilotes incompatible");  
+            return;
+        }
+    }
+    gestion_semaphore(mp, 1); // Section critique pour les écrivains
+    
+    // Dynamically allocate memory for mp->pilotes  based on the size of eliminated
+    mp->pilotes = (Pilotes)malloc(sizeof(eliminated)); 
+
+    // Check if memory allocation was successful
+    if (mp->pilotes  == NULL) {
+        printf("Memory allocation failed!\n");
+        return 1;  // Exit if memory allocation fails
+    }
+    // Copy the contents of array2 into array1
+    memcpy(mp->pilotes, eliminated, sizeof(eliminated));
+    fin_gestion_semaphore(mp, 1);
+
     pid_t pid;
     for (int tour = 1; tour <= nb_tours; tour++) {
         for (int i = 0; i < nb_pilotes; i++) {
@@ -109,6 +156,11 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tour
         fin_gestion_semaphore(mp, 0); // Fin de la section critique
         gestion_semaphore(mp, 1); // Section critique pour les écrivains
         save_ranking(phase, mp->pilotes, nb_pilotes);
+        if(phase == "Q1" || phase == "Q2"){
+            removeLastFiveElements(mp->pilotes, sizeof(mp->pilotes) / sizeof(mp->pilotes[0], eliminated[], length);
+            write_pilotes_to_file(eliminated, legnth, 0);
+            eliminated;
+        }
         fin_gestion_semaphore(mp, 1); 
         usleep(1000000); // Pause de 1 seconde
     }
@@ -126,7 +178,7 @@ void free_practice(MemoirePartagee *mp, int repeat) {
 
 //fonction appeler pour commencer les qualifs
 void qualification(MemoirePartagee *mp) {
-    const int pilotes_q1 = NB_PILOTES, pilotes_q2 = 15, pilotes_q3 = 10;
+    const int pilotes_q1 = NB_PILOTES
     printf("Début de la qualification\n");
 
     // Phase Q1
@@ -174,8 +226,8 @@ int main(int argc, char *argv[]) {
     int count = 0;
     Pilote *pilotes = mp->pilotes;
     if (parse_csv_to_pilotes("pilotes.csv", &pilotes, &count) == 0) {
-        gestion_semaphore(mp, 1); // Section critique pour les écrivains
         for (int i = 0; i < count; i++) {
+            gestion_semaphore(mp, 1); // Section critique pour les écrivains
             // Copier les données des pilotes dans la mémoire partagée
             strcpy(mp->pilotes[i].nom, pilotes[i].nom);
             mp->pilotes[i].num = pilotes[i].num;
@@ -185,8 +237,8 @@ int main(int argc, char *argv[]) {
             mp->pilotes[i].secteur_1 = 0.0;
             mp->pilotes[i].secteur_2 = 0.0;
             mp->pilotes[i].secteur_3 = 0.0;
+            fin_gestion_semaphore(mp, 1);
         }
-        fin_gestion_semaphore(mp, 1);
     }
 
     // Menu de sélection basé sur les arguments de ligne de commande
