@@ -231,7 +231,7 @@ int write_to_csv(const char *filename, char **data, size_t num_rows, int append)
 * adds to ranking file
 */
 void save_ranking(char *step, Pilote pilotes[], int nb_pilotes) {
-    char *filelocation = "step/";
+    char filelocation[20] = "steps/";
     strcat(filelocation, step);
     FILE *file = fopen(filelocation, "w");
 
