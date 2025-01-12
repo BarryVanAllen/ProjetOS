@@ -6,6 +6,13 @@
 #include <string.h>
 #include "types.h"
 
+
+
+//fonction pour la gestions des semaphores ecriture et lecture
+void gestion_semaphore(MemoirePartagee *mp, int is_writer);
+//idem qu'avant
+void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer);
+
 /**
  * Reads the content of elim and returns an array of Pilote structures.
  * Assumes the file contains one Pilote per line.
