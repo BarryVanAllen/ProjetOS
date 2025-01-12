@@ -64,12 +64,12 @@ void read_eliminated_cars(char filetoread, Pilote array[]) {
     int i = 15, j = 10;
     while (fgets(results, sizeof(results), file)) {
 
-        if (strcmp(file_to_read, "steps/elim"") == 0) {
+        if (strcmp(filetoread, "steps/elim") == 0) {
             array[i] = atoi(results);
             i++;
         }
 
-        if (strcmp(file_to_read, "steps/elim"") == 0) {
+        if (strcmp(filetoread, "steps/elim") == 0) {
             array[j] = atoi(results);
             j++;
         }
