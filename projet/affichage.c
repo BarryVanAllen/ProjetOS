@@ -35,7 +35,7 @@ void afficher_resultats(Pilote pilotes[], int nb_pilotes, const char *phase) {
     printf("\033[H\033[J"); // Nettoie l'écran (optionnel)
     printf("--- Résultats : %s ---\n", phase);
     printf("\n┌───────────┬────────────┬────────────┬────────────┬────────────┬────────────┬────────────┬──────────────────┬───────────┐\n");
-    printf("| Position  | Num        | S1         | S2         | S3         | Lap Time   | Lap        | Best Lap Time    | Ecart     |\n");
+    printf("| Position  | Num        | S1         | S2         | S3         | Lap Time   | Lap        | Best Lap Time    | BTLap     |\n");
     printf("├───────────┼────────────┼────────────┼────────────┼────────────┼────────────┼────────────┼──────────────────┼───────────┤\n");
 
     for (int i = 0; i < nb_pilotes; i++) {
