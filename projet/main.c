@@ -21,7 +21,7 @@
 #define VARIATION_MAX 3000  // Maximum time variation in milliseconds
 #define BASE_TEMPS_SEC 30.000
 
-Pilote eliminated[5];
+Pilote eliminated;
 
 //fonction qui genere un temps aleatoire par secteurs
 float generer_temps_secteur() {
