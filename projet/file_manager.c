@@ -10,7 +10,7 @@
  *         Caller must free the array after use.
  */
 Pilote read_elim() {
-    FILE *file = fopen(filename, "r");
+    FILE *file = fopen("steps/elim", "r");
     if (file == NULL) {
         perror("Error opening file");
         return NULL;
