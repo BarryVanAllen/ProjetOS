@@ -1,8 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <float.h>
 #include "types.h"
 #include "affichage.h"
+
+char* format_time(double time_in_seconds) {
+    static char formatted_time[20];
+    int minutes = (int)(time_in_seconds / 60);
+    int seconds = (int)(time_in_seconds) % 60;
+    int milliseconds = (int)((time_in_seconds - (int)time_in_seconds) * 1000);
+    snprintf(formatted_time, sizeof(formatted_time), "%d:%02d:%03d", minutes, seconds, milliseconds);
+    return formatted_time;
+}
+
+
 /**
  * Reads the content of a file into a dynamically allocated buffer.
  * 
@@ -224,6 +236,18 @@ void save_ranking(char *step, Pilote pilotes[], int nb_pilotes) {
         exit(EXIT_FAILURE);
     }
 
+    // Variables pour les meilleurs temps par secteur et meilleur tour global
+    double meilleur_temps_secteur_1 = DBL_MAX;
+    double meilleur_temps_secteur_2 = DBL_MAX;
+    double meilleur_temps_secteur_3 = DBL_MAX;
+    double meilleur_tour_global = DBL_MAX;
+
+    int pilote_meilleur_secteur_1 = -1;
+    int pilote_meilleur_secteur_2 = -1;
+    int pilote_meilleur_secteur_3 = -1;
+    int pilote_meilleur_tour_global = -1;
+
+    // Affichage du classement
     for (int i = 0; i < nb_pilotes; i++) {
         double temps_en_secondes = pilotes[i].temps_meilleur_tour;
 
@@ -236,8 +260,45 @@ void save_ranking(char *step, Pilote pilotes[], int nb_pilotes) {
         char best_lap_str[20];
         snprintf(best_lap_str, sizeof(best_lap_str), "%d:%02d:%03d", minutes, secondes, millisecondes);
 
-        fprintf(file, "%d --> %s\n", pilotes[i].num, best_lap_str);
+        // Écrire le classement
+        fprintf(file, "%d. %s --> %d:%02d:%03d\n", i + 1, pilotes[i].nom, minutes, secondes, millisecondes);
+
+        // Mettre à jour les meilleurs temps des secteurs
+        if (pilotes[i].secteur_1 < meilleur_temps_secteur_1) {
+            meilleur_temps_secteur_1 = pilotes[i].secteur_1;
+            pilote_meilleur_secteur_1 = i;
+        }
+        if (pilotes[i].secteur_2 < meilleur_temps_secteur_2) {
+            meilleur_temps_secteur_2 = pilotes[i].secteur_2;
+            pilote_meilleur_secteur_2 = i;
+        }
+        if (pilotes[i].secteur_3 < meilleur_temps_secteur_3) {
+            meilleur_temps_secteur_3 = pilotes[i].secteur_3;
+            pilote_meilleur_secteur_3 = i;
+        }
+        if (temps_en_secondes < meilleur_tour_global) {
+            meilleur_tour_global = temps_en_secondes;
+            pilote_meilleur_tour_global = i;
+        }
     }
+
+    // Sauvegarder les meilleurs temps des secteurs et du meilleur tour global
+    fprintf(file, "\nMeilleurs temps:\n");
+    
+    // Secteur 1
+    double t1 = meilleur_temps_secteur_1;
+    fprintf(file, "Secteur 1: %s (Pilote: %s)\n", format_time(t1), pilotes[pilote_meilleur_secteur_1].nom);
+
+    // Secteur 2
+    double t2 = meilleur_temps_secteur_2;
+    fprintf(file, "Secteur 2: %s (Pilote: %s)\n", format_time(t2), pilotes[pilote_meilleur_secteur_2].nom);
+
+    // Secteur 3
+    double t3 = meilleur_temps_secteur_3;
+    fprintf(file, "Secteur 3: %s (Pilote: %s)\n", format_time(t3), pilotes[pilote_meilleur_secteur_3].nom);
+
+    // Meilleur tour global
+    fprintf(file, "Meilleur tour global: %s (Pilote: %s)\n", format_time(meilleur_tour_global), pilotes[pilote_meilleur_tour_global].nom);
 
     if (fclose(file) != 0) {
         perror("fclose failed!");
