@@ -33,7 +33,7 @@ void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer) {
 *@param Pilote array[] le tableau qui contient les pilotes éliminés.
 */
 
-void save_eliminated_cars(char filetosave, MemoirePartagee *mp){
+void save_eliminated_cars(const char *filetosave, MemoirePartagee *mp){
 
     FILE *file = fopen(filetosave, "w");
 
