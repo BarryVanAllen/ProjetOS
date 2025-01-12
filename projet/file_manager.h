@@ -13,6 +13,20 @@ void gestion_semaphore(MemoirePartagee *mp, int is_writer);
 //idem qu'avant
 void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer);
 
+/** la fonction save_eliminated_cars sauvegarde les voitures élimninés dans un fichier.
+* @param char filetosave le fichier qui va etre sauver
+*@param Pilote array[] le tableau qui contient les pilotes éliminés.
+*/
+
+void save_eliminated_cars(charfiletosave, Pilote array[]);
+
+/** la fonction read_eliminated_cars lit les pilotes élimninés depuis un fichier
+ *  vers un tableau qui va contenir le classement 
+ * @param char filetoread
+*@param Pilote array[] le tableau qui contient le classmeent des Qualifs
+*/
+
+void read_eliminated_cars(char filetoread, Pilote array[]); 
 
 /**
  * Parses all rows from a CSV file into an array of Pilote structs.
