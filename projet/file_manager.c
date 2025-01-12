@@ -1,7 +1,9 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "types.h"
+#include "affichage.h"
 /**
  * Reads the content of a file into a dynamically allocated buffer.
  * 
@@ -211,4 +213,35 @@ int write_to_csv(const char *filename, char **data, size_t num_rows, int append)
 
     fclose(file);
     return 0;
+}
+
+void save_ranking(char *step, Pilote pilotes[], int nb_pilotes) {
+    char filelocation[20] = "steps/";
+    strcat(filelocation, step);
+    FILE *file = fopen(filelocation, "w");
+
+    if (file == NULL) {
+        perror("Open failed!");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < nb_pilotes; i++) {
+        double temps_en_secondes = pilotes[i].temps_meilleur_tour;
+
+        // Calcul des minutes, secondes, millisecondes
+        int minutes = (int)(temps_en_secondes / 60); // Extraire les minutes
+        int secondes = (int)(temps_en_secondes) % 60; // Extraire les secondes
+        int millisecondes = (int)((temps_en_secondes - (int)temps_en_secondes) * 1000); // Extraire les millisecondes
+
+        // Formater le temps en "minutes:secondes:millisecondes"
+        char best_lap_str[20];
+        snprintf(best_lap_str, sizeof(best_lap_str), "%d:%02d:%03d", minutes, secondes, millisecondes);
+
+        fprintf(file, "%d --> %s\n", pilotes[i].num, best_lap_str);
+    }
+
+    if (fclose(file) != 0) {
+        perror("fclose failed!");
+        exit(EXIT_FAILURE);
+    }
 }
