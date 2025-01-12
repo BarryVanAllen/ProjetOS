@@ -3,7 +3,7 @@
 #include "sessions.h"
 #include "affichage.h"
 #include "types.h"
-
+#include "file_manager.h"
 #define NB_TOURS_ESSAIS 20
 #define NB_TOURS_QUALIF 15
 #define NB_TOURS_COURSE 50
