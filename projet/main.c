@@ -79,8 +79,7 @@ void cleanup(MemoirePartagee *mp, int shmid) {
     sem_destroy(&mp->mutLect);
 }
 
-//fonction pour creer les tours de piste
-void executer_tour(MemoirePartagee *mp, int nb_pilotes, const char *phase, int nb_tours) {
+void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tours) {
     pid_t pid;
     for (int tour = 1; tour <= nb_tours; tour++) {
         for (int i = 0; i < nb_pilotes; i++) {
@@ -107,7 +106,13 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, const char *phase, int n
         fin_gestion_semaphore(mp, 0); // Fin de la section critique
         usleep(1000000); // Pause de 1 seconde
     }
+    gestion_semaphore(mp, 1); // Section critique pour les écrivains
+    save_ranking(phase, mp->pilotes, nb_pilotes);
+    if(phase == "Q1" || phase == "Q2"){
+    }
+    fin_gestion_semaphore(mp, 1); 
 }
+
 
 //fonction appeler pour commencer les free practice
 void free_practice(MemoirePartagee *mp, int repeat) {
