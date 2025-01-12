@@ -35,7 +35,7 @@ void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer) {
 
 void save_eliminated_cars(char filetosave, MemoirePartagee *mp){
 
-    FILE *file = fopen(file_to_save, "w");
+    FILE *file = fopen(filetosave, "w");
 
     if (file == NULL)
         perror("fopen failed !"), exit(EXIT_FAILURE);
