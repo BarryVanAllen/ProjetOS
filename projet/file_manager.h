@@ -6,41 +6,31 @@
 #include <string.h>
 #include "types.h"
 
-/**
- * Retrieves the path to a resource file.
- * @param file_name Name of the resource file.
- * @return Full path to the resource file.
- */
-char *get_resources_file(char *file_name);
+
+
+//fonction pour la gestions des semaphores ecriture et lecture
+void gestion_semaphore(MemoirePartagee *mp, int is_writer);
+//idem qu'avant
+void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer);
 
 /**
- * Reads the content of a file into a dynamically allocated buffer.
- * 
- * @param filename The name of the file to read.
- * @param buffer_size The maximum size of the buffer to allocate.
- * @return A pointer to the buffer containing file contents, or NULL on failure.
- *         Caller must free the buffer after use.
+ * Reads the content of elim and applys them to the paramater.
+ * Assumes the file contains one Pilote per line.
+ * @parameters an array of pilotes of Type Pilote.
+ *         Caller must free the array after use.
  */
-char *read_file(const char *filename, size_t *buffer_size);
+void read_elim(Pilote *pilotes);
 
 /**
- * Writes data to a file.
+ * Writes an array of Pilote structures to a file.
  * 
- * @param filename The name of the file to write to.
- * @param data The data to write to the file.
+ * @param pilotes The array of Pilote structures to write to the file.
+ * @param num_pilotes The number of Pilote structures in the array.
  * @param append If non-zero, data will be appended; otherwise, the file will be overwritten.
  * @return 0 on success, or -1 on failure.
  */
-int write_file(const char *filename, char *data, int append);
+int write_pilotes_to_file(Pilote *pilotes, size_t num_pilotes, int append);
 
-/**
- * Copies the contents of one file to another.
- * 
- * @param source_file The source file to copy from.
- * @param destination_file The destination file to copy to.
- * @return 0 on success, or -1 on failure.
- */
-int copy_file(const char *source_file, char *destination_file);
 
 /**
  * Parses all rows from a CSV file into an array of Pilote structs.
@@ -52,12 +42,6 @@ int copy_file(const char *source_file, char *destination_file);
  */
 int parse_csv_to_pilotes(const char *filename, Pilote **pilotes, int *count) ;
 
-/**
- * Prints the entire content of a CSV file.
- * 
- * @param filename The name of the CSV file.
- */
-void print_csv(char *filename);
 
 /**
  * Writes data to a CSV file.
@@ -70,5 +54,22 @@ void print_csv(char *filename);
  * @return 0 on success, or -1 on failure.
  */
 int write_to_csv(const char *filename, char **data, size_t num_rows, int append);
+
+/**
+* @param name of step so that the file saves the rankings
+* @param array of pilotes
+* @param nmbr of pilotes
+* @return nothing
+* adds to ranking file
+*/
+void save_ranking(char *step, Pilote pilotes[], int nb_pilotes);
+
+/**
+ * Counts the number of lines in a given file.
+ *
+ * @param filename The name of the file to read.
+ * @return The number of lines in the file, or -1 if there was an error opening the file.
+ */
+int count_lines(char *filename);
 
 #endif // FILE_UTILS_H
