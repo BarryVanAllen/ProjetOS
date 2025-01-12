@@ -33,7 +33,7 @@ void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer) {
 *@param Pilote array[] le tableau qui contient les pilotes éliminés.
 */
 
-void save_eliminated_cars(charfiletosave, Pilote array[]) {
+void save_eliminated_cars(charfiletosave, MemoirePartagee *mp){
 
     FILE *file = fopen(file_to_save, "w");
 
@@ -53,8 +53,7 @@ void save_eliminated_cars(charfiletosave, Pilote array[]) {
  * @param char filetoread
 *@param Pilote array[] le tableau qui contient le classmeent des Qualifs
 */
-
-void read_eliminated_cars(char filetoread, Pilote array[]) {
+void read_eliminated_cars(char filetoread, int array[]){
     char results[5];
 
     FILE *file = fopen(filetoread, "r");
