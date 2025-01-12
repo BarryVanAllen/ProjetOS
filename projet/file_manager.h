@@ -71,4 +71,6 @@ void print_csv(char *filename);
  */
 int write_to_csv(const char *filename, char **data, size_t num_rows, int append);
 
+void save_ranking(char *step, Pilote pilotes[], int nb_pilotes);
+
 #endif // FILE_UTILS_H
