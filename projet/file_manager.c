@@ -3,6 +3,31 @@
 #include <string.h>
 #include "types.h"
 
+
+
+//fonction pour la gestions des semaphores ecriture et lecture
+void gestion_semaphore(MemoirePartagee *mp, int is_writer) {
+    if (is_writer) {
+        sem_wait(&mp->mutex); // Protection des écrivains
+    } else {
+        sem_wait(&mp->mutLect);
+        mp->nbrLect++;
+        if (mp->nbrLect == 1) sem_wait(&mp->mutex); // Premier lecteur bloque les écrivains
+        sem_post(&mp->mutLect);
+    }
+}
+//idem qu'avant
+void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer) {
+    if (is_writer) {
+        sem_post(&mp->mutex); // Libération des écrivains
+    } else {
+        sem_wait(&mp->mutLect);
+        mp->nbrLect--;
+        if (mp->nbrLect == 0) sem_post(&mp->mutex); // Dernier lecteur débloque les écrivains
+        sem_post(&mp->mutLect);
+    }
+}
+
 /**
  * Reads the content of elim and returns an array of Pilote structures.
  * Assumes the file contains one Pilote per line.
