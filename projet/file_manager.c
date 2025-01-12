@@ -28,45 +28,57 @@ void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer) {
     }
 }
 
-/**
- * Reads the content of elim and applys them to the paramater.
- * Assumes the file contains one Pilote per line.
- * @parameters an array of pilotes of Type Pilote.
- *         Caller must free the array after use.
- */
-void read_elim(Pilote *pilotes) {
-    FILE *file = fopen("steps/elim", "r");
-    if (file == NULL) {
-        perror("Error opening file");
-        return;
+/** la fonction save_eliminated_cars sauvegarde les voitures élimninés dans un fichier.
+* @param char filetosave le fichier qui va etre sauver
+*@param Pilote array[] le tableau qui contient les pilotes éliminés.
+*/
+
+void save_eliminated_cars(charfiletosave, Pilote array[]) {
+
+    FILE *file = fopen(file_to_save, "w");
+
+    if (file == NULL)
+        perror("fopen failed !"), exit(EXIT_FAILURE);
+
+    for (int i = 0; i < 5; i++) {
+        fprintf(file, "%d\n", array[i].num);
     }
 
-    // Initialize variables
-    char line[25];
-    size_t count = 0;
-    
-    // Read lines and count the number of Pilote entries
-    while (fgets(line, sizeof(line), file)) {
-        Pilote p;
-        // Parse the line into the Pilote structure
-        if (sscanf(line, "%49s %d %f %f %f %f %f %f %d", 
-                   p.nom, &p.num, &p.temps_meilleur_tour, 
-                   &p.dernier_temps_tour, &p.temps_course_total, 
-                   &p.secteur_1, &p.secteur_2, &p.secteur_3, &p.num_tour) == 9) {
-            // Reallocate memory for the array of Pilote structures
-            Pilote *temp = realloc(pilotes, (count + 1) * sizeof(Pilote));
-            if (temp == NULL) {
-                perror("Error reallocating memory");
-                free(pilotes);
-                fclose(file);
-            }
-            pilotes = temp;
-            pilotes[count++] = p;  // Add the new Pilote to the array
+    if (fclose(file) != 0)
+        perror("fclose failed !"), exit(EXIT_FAILURE);
+}
+
+/** la fonction read_eliminated_cars lit les pilotes élimninés depuis un fichier
+ *  vers un tableau qui va contenir le classement 
+ * @param char filetoread
+*@param Pilote array[] le tableau qui contient le classmeent des Qualifs
+*/
+
+void read_eliminated_cars(char filetoread, Pilote array[]) {
+    char results[5];
+
+    FILE *file = fopen(filetoread, "r");
+
+    if (file == NULL) perror("fopen failed !"), exit(EXIT_FAILURE);
+
+    int i = 15, j = 10;
+    while (fgets(results, sizeof(results), file)) {
+
+        if (strcmp(file_to_read, "steps/elim"") == 0) {
+            array[i] = atoi(results);
+            i++;
+        }
+
+        if (strcmp(file_to_read, "steps/elim"") == 0) {
+            array[j] = atoi(results);
+            j++;
         }
     }
 
-    fclose(file);
+    if (fclose(file) != 0)
+        perror("fclose failed !"), exit(EXIT_FAILURE);
 }
+
 
 /**
  * Writes an array of Pilote structures to a file.
