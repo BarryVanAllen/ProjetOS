@@ -12,7 +12,7 @@
  * @return A pointer to the array of Pilote structures, or NULL on failure.
  *         Caller must free the array after use.
  */
-Pilote *read_elim();
+Pilote read_elim();
 
 /**
  * Writes an array of Pilote structures to a file.
