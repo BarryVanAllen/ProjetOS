@@ -9,7 +9,7 @@
  * @return A pointer to the array of Pilote structures, or NULL on failure.
  *         Caller must free the array after use.
  */
-Pilote *read_elim() {
+Pilote read_elim() {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         perror("Error opening file");
