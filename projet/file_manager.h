@@ -17,7 +17,7 @@ void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer);
 * @param char filetosave le fichier qui va etre sauver
 *@param Pilote array[] le tableau qui contient les pilotes éliminés.
 */
-void save_eliminated_cars(charfiletosave, MemoirePartagee *mp);
+void save_eliminated_cars(const char *filetosave, MemoirePartagee *mp);
 
 /** la fonction read_eliminated_cars lit les pilotes élimninés depuis un fichier
  *  vers un tableau qui va contenir le classement 
