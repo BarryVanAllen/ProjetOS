@@ -251,3 +251,35 @@ void save_ranking(char *step, Pilote pilotes[], int nb_pilotes) {
         exit(EXIT_FAILURE);
     }
 }
+
+/**
+ * Counts the number of lines in a given file.
+ *
+ * @param filename The name of the file to read.
+ * @return The number of lines in the file, or -1 if there was an error opening the file.
+ */
+int count_lines(char *filename) {
+    // Open the file in read mode ("r")
+    char filelocation[20] = "steps/";
+    strcat(filelocation, filename);
+    FILE *file = fopen(filelocation, "r");
+
+    if (file == NULL) {
+        perror("Error opening file");
+        return -1; // Return -1 to indicate an error occurred while opening the file
+    }
+
+    int count = 0; // Initialize a counter to store the number of lines
+    char ch; // Variable to store each character read from the file
+
+    while ((ch = fgetc(file)) != EOF) {
+        // If a newline character is found, increment the line count
+        if (ch == '\n') {
+            count++;
+        }
+    }
+
+    // Close the file after reading is complete
+    fclose(file);
+    return count;
+}
