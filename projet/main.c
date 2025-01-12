@@ -34,7 +34,11 @@ void generer_temps_pilote(Pilote *pilote) {
     pilote->dernier_temps_tour = pilote->secteur_1 + pilote->secteur_2 + pilote->secteur_3;
 }
 
-
+int effectuer_pit_stop(Pilote pilote) {
+    // Simuler un pit stop de 10 secondes
+    int temps_pit_stop = 10;
+    return temps_pit_stop;
+}
 
 //fonction qui simule le comportement d'un pilote, s'il choisit de rester en piste ou de rentrer aux stands
 bool doit_rester_en_piste() {
@@ -58,17 +62,13 @@ void gerer_strategie_pilote(Pilote *pilote) {
     } else {
         // Le pilote rentre aux stands, il prend un temps de pause
         // Vous pouvez définir un temps d'arrêt spécifique pour simuler un pit stop
-        pilote->dernier_temps_tour = 0.000;
+        pilote->secteur_1 = generer_temps_secteur();
+        pilote->secteur_2 = generer_temps_secteur();
+        pilote->secteur_3 = generer_temps_secteur() + effectuer_pit_stop(*pilote);
+        pilote->dernier_temps_tour = pilote->secteur_1 + pilote->secteur_2 + pilote->secteur_3;
         // Le pilote peut repartir après un certain nombre de tours ou lorsqu'il est prêt à recommencer
     }
 }
-
-void effectuer_pit_stop(Pilote *pilote) {
-    // Simuler un pit stop de 10 secondes
-    int temps_pit_stop = 10;
-    pilote->dernier_temps_tour += temps_pit_stop;
-}
-
 
 void tri_pilotes(Pilote pilotes[], int nb_pilotes) {
     for (int i = 0; i < nb_pilotes - 1; i++) {
