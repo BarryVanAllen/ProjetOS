@@ -21,7 +21,7 @@
 #define VARIATION_MAX 3000  // Maximum time variation in milliseconds
 #define BASE_TEMPS_SEC 30.000
 
-Pilote Eliminated[10]
+Pilote eliminated[5];
 
 //fonction qui genere un temps aleatoire par secteurs
 float generer_temps_secteur() {
@@ -36,12 +36,12 @@ void generer_temps_pilote(Pilote *pilote) {
     pilote->dernier_temps_tour = pilote->secteur_1 + pilote->secteur_2 + pilote->secteur_3;
 }
 
-Pilote* removeLastFiveElements(Pilote arr[], int *size, Pilote removed[], int *removedSize) {
+Pilote* removeLastFiveElements(Pilote arr[], int size, Pilote removed[], int *removedSize) {
     // Check if there are at least 5 elements to remove
-    if (*size >= 5) {
+    if (size >= 5) {
         // Append the last 5 elements to the removed array
         for (int i = 0; i < 5; i++) {
-            removed[*removedSize + i] = arr[*size - 5 + i];
+            removed[*removedSize + i] = arr[size - 5 + i];
         }
         *removedSize += 5;  // Increase the size of the removed array
         // Create a new array to hold the remaining elements
@@ -52,18 +52,18 @@ Pilote* removeLastFiveElements(Pilote arr[], int *size, Pilote removed[], int *r
             return NULL;
         }
         // Copy the remaining elements to the new array
-        for (int i = 0; i < *size - 5; i++) {
+        for (int i = 0; i < size - 5; i++) {
             newArray[i] = arr[i];
         }
 
         // Adjust the size of the original array
-        *size -= 5;
+        size -= 5;
 
         // Return the new array
         return newArray;
     } else {
         // If fewer than 5 elements, clear the original array and return NULL
-        *size = 0;
+        size = 0;
         return NULL;
     }
 }
@@ -95,7 +95,7 @@ void cleanup(MemoirePartagee *mp, int shmid) {
 //fonction pour creer les tours de piste
 void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tours) {
     gestion_semaphore(mp, 0); // Section critique pour les lecteurs
-    Pilote eliminated[] = read_elim();
+    eliminated[] = read_elim();
     int length = sizeof(eliminated) / sizeof(eliminated[0]);
     fin_gestion_semaphore(mp, 0); // Fin de la section critique
     if(phase == "Q2"){
@@ -119,12 +119,12 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tour
     gestion_semaphore(mp, 1); // Section critique pour les écrivains
     
     // Dynamically allocate memory for mp->pilotes  based on the size of eliminated
-    mp->pilotes = (Pilotes)malloc(sizeof(eliminated)); 
+    mp->pilotes = (Pilote)malloc(sizeof(mp->pilotes)-sizeof(eliminated)); 
 
     // Check if memory allocation was successful
     if (mp->pilotes  == NULL) {
         printf("Memory allocation failed!\n");
-        return 1;  // Exit if memory allocation fails
+        return;  // Exit if memory allocation fails
     }
     // Copy the contents of array2 into array1
     memcpy(mp->pilotes, eliminated, sizeof(eliminated));
@@ -157,9 +157,8 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tour
         gestion_semaphore(mp, 1); // Section critique pour les écrivains
         save_ranking(phase, mp->pilotes, nb_pilotes);
         if(phase == "Q1" || phase == "Q2"){
-            removeLastFiveElements(mp->pilotes, sizeof(mp->pilotes) / sizeof(mp->pilotes[0], eliminated[], length);
+            removeLastFiveElements(mp->pilotes, sizeof(mp->pilotes) / sizeof(mp->pilotes[0], eliminated, length);
             write_pilotes_to_file(eliminated, legnth, 0);
-            eliminated;
         }
         fin_gestion_semaphore(mp, 1); 
         usleep(1000000); // Pause de 1 seconde
