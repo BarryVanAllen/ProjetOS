@@ -44,7 +44,7 @@ Pilote read_elim() {
     // Initialize variables
     char line[MAX_LINE_LENGTH];
     size_t count = 0;
-    Pilote *pilotes = NULL;
+    Pilote pilotes = NULL;
 
     // Read lines and count the number of Pilote entries
     while (fgets(line, sizeof(line), file)) {
