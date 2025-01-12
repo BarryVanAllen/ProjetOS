@@ -41,7 +41,7 @@ void save_eliminated_cars(charfiletosave, MemoirePartagee *mp){
         perror("fopen failed !"), exit(EXIT_FAILURE);
 
     for (int i = 0; i < 5; i++) {
-        fprintf(file, "%d\n", array[i].num);
+        fprintf(file, "%d\n", mp->pilotes[i].num);
     }
 
     if (fclose(file) != 0)
