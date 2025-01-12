@@ -50,33 +50,41 @@ void save_eliminated_cars(charfiletosave, MemoirePartagee *mp){
 
 /** la fonction read_eliminated_cars lit les pilotes élimninés depuis un fichier
  *  vers un tableau qui va contenir le classement 
- * @param char filetoread
+ * @param const char filetoread
 *@param Pilote array[] le tableau qui contient le classmeent des Qualifs
 */
-void read_eliminated_cars(char filetoread, int array[]){
+void read_eliminated_cars(const char *filetoread, int array[]) {
     char results[5];
 
+    // Open the file for reading
     FILE *file = fopen(filetoread, "r");
-
-    if (file == NULL) perror("fopen failed !"), exit(EXIT_FAILURE);
+    if (file == NULL) {
+        perror("fopen failed !");
+        exit(EXIT_FAILURE);
+    }
 
     int i = 15, j = 10;
+
+    // Read each line from the file
     while (fgets(results, sizeof(results), file)) {
-
+        // Check if the filename matches "steps/elim"
         if (strcmp(filetoread, "steps/elim") == 0) {
+            // Convert the string read into an integer and store in array[i] and array[j]
             array[i] = atoi(results);
-            i++;
-        }
-
-        if (strcmp(filetoread, "steps/elim") == 0) {
             array[j] = atoi(results);
+            // Increment the indices for the next values
+            i++;
             j++;
         }
     }
 
-    if (fclose(file) != 0)
-        perror("fclose failed !"), exit(EXIT_FAILURE);
+    // Close the file
+    if (fclose(file) != 0) {
+        perror("fclose failed !");
+        exit(EXIT_FAILURE);
+    }
 }
+
 
 /**
  * Parses all rows from a CSV file into an array of Pilote structs.
