@@ -37,6 +37,7 @@ void save_eliminated_cars(const char *filetosave, MemoirePartagee *mp){
 
     FILE *file = fopen(filetosave, "w");
 
+
     if (file == NULL)
         perror("fopen failed !"), exit(EXIT_FAILURE);
 
@@ -77,6 +78,7 @@ void read_eliminated_cars(const char *filetoread, int array[]) {
             j++;
         }
     }
+
 
     // Close the file
     if (fclose(file) != 0) {

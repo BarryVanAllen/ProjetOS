@@ -35,7 +35,6 @@ void generer_temps_pilote(Pilote *pilote) {
     pilote->dernier_temps_tour = pilote->secteur_1 + pilote->secteur_2 + pilote->secteur_3;
 }
 
-
 void tri_pilotes(Pilote pilotes[], int nb_pilotes) {
     for (int i = 0; i < nb_pilotes - 1; i++) {
         for (int j = 0; j < nb_pilotes - i - 1; j++) {
