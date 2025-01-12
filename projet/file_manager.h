@@ -17,17 +17,14 @@ void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer);
 * @param char filetosave le fichier qui va etre sauver
 *@param Pilote array[] le tableau qui contient les pilotes éliminés.
 */
-
-void save_eliminated_cars(charfiletosave, Pilote array[]);
+void save_eliminated_cars(const char *filetosave, MemoirePartagee *mp);
 
 /** la fonction read_eliminated_cars lit les pilotes élimninés depuis un fichier
  *  vers un tableau qui va contenir le classement 
- * @param char filetoread
+ * @param const char filetoread
 *@param Pilote array[] le tableau qui contient le classmeent des Qualifs
 */
-
-void read_eliminated_cars(char filetoread, Pilote array[]); 
-
+void read_eliminated_cars(const char *filetoread, int array[]);
 
 /**
  * Parses all rows from a CSV file into an array of Pilote structs.

@@ -35,47 +35,6 @@ void generer_temps_pilote(Pilote *pilote) {
     pilote->dernier_temps_tour = pilote->secteur_1 + pilote->secteur_2 + pilote->secteur_3;
 }
 
-Pilote* removeLastFiveElements(Pilote arr[], int size, Pilote removed[], int *removedSize) {
-    // Check if there are at least 5 elements to remove
-    if (size >= 5) {
-        // Append the last 5 elements to the removed array
-        for (int i = 0; i < 5; i++) {
-            removed[*removedSize + i] = arr[size - 5 + i];
-        }
-        *removedSize += 5;  // Increase the size of the removed array
-        // Create a new array to hold the remaining elements
-        Pilote *newArray = (Pilote*)malloc((size - 5) * sizeof(Pilote));
-        if (newArray == NULL) {
-            // Handle memory allocation failure
-            printf("Memory allocation failed\n");
-            return NULL;
-        }
-        // Copy the remaining elements to the new array
-        for (int i = 0; i < size - 5; i++) {
-            newArray[i] = arr[i];
-        }
-
-        // Adjust the size of the original array
-        size -= 5;
-
-        // Return the new array
-        return newArray;
-    } else {
-        // If fewer than 5 elements, clear the original array and return NULL
-        size = 0;
-        return NULL;
-    }
-}
-
-// Function to remove a pilot by shifting remaining elements
-void removePilote(Pilote *pilotes, int *size, int index) {
-    // Shift all elements after the 'index' to the left by 1 position
-    for (int i = index; i < (*size) - 1; i++) {
-        pilotes[i] = pilotes[i + 1];  // Move the next pilot to the current position
-    }
-    (*size)--;  // Reduce the size of the array since we removed an element
-}
-
 void tri_pilotes(Pilote pilotes[], int nb_pilotes) {
     for (int i = 0; i < nb_pilotes - 1; i++) {
         for (int j = 0; j < nb_pilotes - i - 1; j++) {
@@ -101,41 +60,6 @@ void cleanup(MemoirePartagee *mp, int shmid) {
 
 //fonction pour creer les tours de piste
 void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tours) {
-    gestion_semaphore(mp, 0); // Section critique pour les lecteurs
-    Pilote *elimination = malloc(sizeof(Pilote) * 10);;
-    read_elim(elimination);
-    int length = sizeof(elimination) / sizeof(elimination[0]);
-    fin_gestion_semaphore(mp, 0); // Fin de la section critique
-    if(phase == "Q2"){
-        if (length != 15){
-            printf("Nombre de Pilotes incompatible"); 
-            return;
-        }
-    }
-    if(phase == "Q3"){
-        if (length > 10){
-            printf("Nombre de Pilotes incompatible");
-            return;
-        }
-    }
-    if(phase == "Course"){
-        if (length > 10){
-            printf("Nombre de Pilotes incompatible");  
-            return;
-        }
-    }
-    // Perform the elimination
-    for (int i = 0; i < length; i++) {
-        printf("1");
-        for (int j = 0; j < nb_pilotes; j++) {
-            // If a pilote matches an elimination target, remove it from the pilotes array
-            if (mp->pilotes[j].num == elimination[i].num) {
-                removePilote(mp->pilotes, &nb_pilotes, j);
-                nb_pilotes--; // Decrement the total number of pilotes
-                break; // Exit the inner loop after removing one pilote
-            }
-        }
-    }
     pid_t pid;
     for (int tour = 1; tour <= nb_tours; tour++) {
         for (int i = 0; i < nb_pilotes; i++) {
@@ -165,8 +89,6 @@ void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tour
     gestion_semaphore(mp, 1); // Section critique pour les écrivains
     save_ranking(phase, mp->pilotes, nb_pilotes);
     if(phase == "Q1" || phase == "Q2"){
-      removeLastFiveElements(mp->pilotes, nb_pilotes, elimination, &length);
-      write_pilotes_to_file(elimination, length, 0);
     }
     fin_gestion_semaphore(mp, 1); 
 }
