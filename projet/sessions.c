@@ -64,11 +64,11 @@ void afficher_top_10(MemoirePartagee *mp, int top) {
 // Fonction pour exécuter toutes les sessions
 void executer_toutes_les_sessions(MemoirePartagee *mp) {
     printf("\n--- Free Practice 1 ---\n");
-    free_practice(mp, 1);
+    executer_tour(mp, NB_PILOTES, "FP1", NB_TOURS_ESSAIS);
     printf("\n--- Free Practice 2 ---\n");
-    free_practice(mp, 1);
+    executer_tour(mp, NB_PILOTES, "FP2", NB_TOURS_ESSAIS);
     printf("\n--- Free Practice 3 ---\n");
-    free_practice(mp, 1);
+    executer_tour(mp, NB_PILOTES, "FP3", NB_TOURS_ESSAIS);
 
     printf("\n--- Qualification Phase 1 (Q1) ---\n");
     executer_tour(mp, NB_PILOTES, "Q1", NB_TOURS_QUALIF);
