@@ -95,7 +95,7 @@ void cleanup(MemoirePartagee *mp, int shmid) {
 //fonction pour creer les tours de piste
 void executer_tour(MemoirePartagee *mp, int nb_pilotes, char *phase, int nb_tours) {
     gestion_semaphore(mp, 0); // Section critique pour les lecteurs
-    eliminated[] = read_elim();
+    eliminated = read_elim();
     int length = sizeof(eliminated) / sizeof(eliminated[0]);
     fin_gestion_semaphore(mp, 0); // Fin de la section critique
     if(phase == "Q2"){
