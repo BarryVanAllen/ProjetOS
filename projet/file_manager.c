@@ -28,6 +28,57 @@ void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer) {
     }
 }
 
+/** la fonction save_eliminated_cars sauvegarde les voitures élimninés dans un fichier.
+* @param char filetosave le fichier qui va etre sauver
+*@param Pilote array[] le tableau qui contient les pilotes éliminés.
+*/
+
+void save_eliminated_cars(charfiletosave, Pilote array[]) {
+
+    FILE *file = fopen(file_to_save, "w");
+
+    if (file == NULL)
+        perror("fopen failed !"), exit(EXIT_FAILURE);
+
+    for (int i = 0; i < 5; i++) {
+        fprintf(file, "%d\n", array[i].num);
+    }
+
+    if (fclose(file) != 0)
+        perror("fclose failed !"), exit(EXIT_FAILURE);
+}
+
+/** la fonction read_eliminated_cars lit les pilotes élimninés depuis un fichier
+ *  vers un tableau qui va contenir le classement 
+ * @param char filetoread
+*@param Pilote array[] le tableau qui contient le classmeent des Qualifs
+*/
+
+void read_eliminated_cars(char filetoread, Pilote array[]) {
+    char results[5];
+
+    FILE *file = fopen(filetoread, "r");
+
+    if (file == NULL) perror("fopen failed !"), exit(EXIT_FAILURE);
+
+    int i = 15, j = 10;
+    while (fgets(results, sizeof(results), file)) {
+
+        if (strcmp(file_to_read, "steps/elim"") == 0) {
+            array[i] = atoi(results);
+            i++;
+        }
+
+        if (strcmp(file_to_read, "steps/elim"") == 0) {
+            array[j] = atoi(results);
+            j++;
+        }
+    }
+
+    if (fclose(file) != 0)
+        perror("fclose failed !"), exit(EXIT_FAILURE);
+}
+
 /**
  * Parses all rows from a CSV file into an array of Pilote structs.
  * 
