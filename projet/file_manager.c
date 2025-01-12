@@ -29,23 +29,22 @@ void fin_gestion_semaphore(MemoirePartagee *mp, int is_writer) {
 }
 
 /**
- * Reads the content of elim and returns an array of Pilote structures.
+ * Reads the content of elim and applys them to the paramater.
  * Assumes the file contains one Pilote per line.
- * @return A pointer to the array of Pilote structures, or NULL on failure.
+ * @parameters an array of pilotes of Type Pilote.
  *         Caller must free the array after use.
  */
-Pilote read_elim() {
+void read_elim(Pilote *pilotes) {
     FILE *file = fopen("steps/elim", "r");
     if (file == NULL) {
         perror("Error opening file");
-        return NULL;
+        return;
     }
 
     // Initialize variables
-    char line[MAX_LINE_LENGTH];
+    char line[25];
     size_t count = 0;
-    Pilote pilotes = NULL;
-
+    
     // Read lines and count the number of Pilote entries
     while (fgets(line, sizeof(line), file)) {
         Pilote p;
@@ -60,7 +59,6 @@ Pilote read_elim() {
                 perror("Error reallocating memory");
                 free(pilotes);
                 fclose(file);
-                return NULL;
             }
             pilotes = temp;
             pilotes[count++] = p;  // Add the new Pilote to the array
@@ -68,13 +66,6 @@ Pilote read_elim() {
     }
 
     fclose(file);
-
-    // Set the number of pilotes found
-    if (num_pilotes) {
-        *num_pilotes = count;
-    }
-
-    return pilotes;
 }
 
 /**
@@ -272,4 +263,3 @@ int count_lines() {
     fclose(file);
     return count;
 }
-
