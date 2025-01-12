@@ -12,9 +12,6 @@
 
 // Fonction d'exécution des sessions
 void traiter_session(const char *session, MemoirePartagee *mp) {
-    // temp call to test
-    executer_tour(mp, NB_PILOTES, "FP1", NB_TOURS_ESSAIS);
-    return
     if (strcmp(session, "fp1") == 0) {
         printf("Début de Free Practice 1\n");
         executer_tour(mp, NB_PILOTES, "FP1", NB_TOURS_ESSAIS);
