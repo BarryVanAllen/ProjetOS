@@ -29,7 +29,7 @@ Pilote read_elim();
  * @param append If non-zero, data will be appended; otherwise, the file will be overwritten.
  * @return 0 on success, or -1 on failure.
  */
-int write_pilotes_to_file(Pilote *pilotes, size_t num_pilotes, int append)
+int write_pilotes_to_file(Pilote *pilotes, size_t num_pilotes, int append);
 
 
 /**
