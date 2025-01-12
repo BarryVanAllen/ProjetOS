@@ -81,41 +81,6 @@ void read_eliminated_cars(char filetoread, Pilote array[]) {
 
 
 /**
- * Writes an array of Pilote structures to a file.
- * 
- * @param pilotes The array of Pilote structures to write to the file.
- * @param num_pilotes The number of Pilote structures in the array.
- * @param append If non-zero, data will be appended; otherwise, the file will be overwritten.
- * @return 0 on success, or -1 on failure.
- */
-int write_pilotes_to_file(Pilote *pilotes, size_t num_pilotes, int append) {
-    const char *mode = append ? "a" : "w";
-    FILE *file = fopen("steps/elim", mode);
-    if (file == NULL) {
-        perror("Error opening file");
-        return -1;
-    }
-    // Iterate over the array of Pilote structures and write them to the file
-    for (size_t i = 0; i < num_pilotes; i++) {
-        Pilote *p = &pilotes[i];
-        // Format the Pilote data as a string and write it to the file
-        int bytes_written = fprintf(file, "%s %d %.2f %.2f %.2f %.2f %.2f %.2f %d\n",
-                                    p->nom, p->num, p->temps_meilleur_tour,
-                                    p->dernier_temps_tour, p->temps_course_total,
-                                    p->secteur_1, p->secteur_2, p->secteur_3, p->num_tour);
-
-        if (bytes_written < 0) {
-            fprintf(stderr, "Error writing to file\n");
-            fclose(file);
-            return -1;
-        }
-    }
-
-    fclose(file);
-    return 0;
-}
-
-/**
  * Parses all rows from a CSV file into an array of Pilote structs.
  * 
  * @param filename The name of the CSV file.
